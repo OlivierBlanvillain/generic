@@ -41,8 +41,14 @@ sealed trait ::[+H, +T <: AHList] extends AHList {
   def tail: T
 }
 
-case class HCons[+H, +T <: AHList](underlying: Array[Any], start: Int) extends ::[H, T] {
+object :: {
+  def unapply[H, T <: AHList](l: HCons[H, T]): Option[(H, T)] = Some((l.head, l.tail))
+}
+
+case class HCons[+H, +T <: AHList](underlying: Array[Any], start: Int) extends ::[H, T] with HNil {
   def head: H = underlying(start).asInstanceOf[H]
+  
+  // with HNil = Hack for this asInstanceOf
   def tail: T = HCons(underlying, start + 1).asInstanceOf[T]
 }
 
@@ -52,20 +58,26 @@ object AHList {
   def apply[E1, E2, E3](e1: E1, e2: E2, e3: E3): E1 :: E2 :: E3 :: HNil = unsafe(e1, e2, e3)
   
   def unsafe[L <: AHList](args: Any*): L = HCons(args.toArray, 0).asInstanceOf[L]
-  
-  
 }
 
-// object G {
-//   def main(args: Array[String]): Unit = {
-//     val t: String :: Int :: HNil = AHList("a", 1)
+object G {
+  def main(args: Array[String]): Unit = {
+    val t: String :: Int :: HNil = AHList("a", 1)
     
-//     assert(t.head == "a")
-//     assert(t.tail.head == 1)
+    assert(t.head == "a")
+    assert(t.tail.head == 1)
     
-//     t match {
-//       case AHList(s, i) => ???
-//     }
-    
-//   }
-// }
+    AHList("a", 1) match {
+      case s :: i :: _ =>
+        assert(s == "a")
+        assert(i == 1)
+      }
+      
+    AHList("a", 1, true) match {
+      case s :: i :: b :: _ =>
+        assert(s == "a")
+        assert(i == 1)
+        assert(b == true)
+    }
+  }
+}
