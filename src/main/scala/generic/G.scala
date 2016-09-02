@@ -1,83 +1,98 @@
 package generic
 
-sealed trait SHList
+sealed trait HList
 
-sealed trait SHNil extends SHList
-case object  SHNil extends SHNil
+sealed trait HNil extends HList
 
-sealed trait :*:[+H, +T <: SHList] extends SHList {
+sealed trait ::[+H, +T <: HList] extends HList {
   def head: H
   def tail: T
 }
 
-case class SHList1[E1](e1: E1) extends (E1 :*: SHNil) {
-  def head: E1 = e1
-  def tail: SHNil = SHNil
+// Case class based HLists ------------------------------------------------------------------------
+
+final case object HNil extends HNil
+
+final case class HList1[T1](e1: T1) extends (T1 :: HNil) {
+  def head: T1 = e1
+  def tail: HNil = HNil
 }
 
-case class SHList2[E1, E2](e1: E1, e2: E2) extends (E1 :*: E2 :*: SHNil) {
-  def head: E1 = e1
-  def tail: E2 :*: SHNil = SHList1(e2)
+final case class HList2[T1, T2](e1: T1, e2: T2) extends (T1 :: T2 :: HNil) {
+  def head: T1 = e1
+  def tail: T2 :: HNil = HList1(e2)
 }
 
-case class SHList3[E1, E2, E3](e1: E1, e2: E2, e3: E3) extends (E1 :*: E2 :*: E3 :*: SHNil) {
-  def head: E1 = e1
-  def tail: E2 :*: E3 :*: SHNil = SHList2(e2, e3)
+final case class HList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends (T1 :: T2 :: T3 :: HNil) {
+  def head: T1 = e1
+  def tail: T2 :: T3 :: HNil = HList2(e2, e3)
 }
 
-object SHList {
-  def apply[E1](e1: E1): E1 :*: SHNil = SHList1(e1)
-  def apply[E1, E2](e1: E1, e2: E2): E1 :*: E2 :*: SHNil = SHList2(e1, e2)
-  def apply[E1, E2, E3](e1: E1, e2: E2, e3: E3): E1 :*: E2 :*: E3 :*: SHNil = SHList3(e1, e2, e3)
+final case class HList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4) extends (T1 :: T2 :: T3 :: T4 :: HNil) {
+  def head: T1 = e1
+  def tail: T2 :: T3 :: T4 :: HNil = HList3(e2, e3, e4)
 }
 
-// ------------------------------------------------------------------------------------------------
+// Array based HLists -----------------------------------------------------------------------------
 
-sealed trait AHList
-
-sealed trait HNil extends AHList
-sealed trait ::[+H, +T <: AHList] extends AHList {
-  def head: H
-  def tail: T
+final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends (H :: T) {
+  def head: H = underlying(0).asInstanceOf[H]
+  def tail: T = 
+    underlying.size match {
+      case 5 => HList4(underlying(1), underlying(2), underlying(3), underlying(4)).asInstanceOf[T]
+      case _ => HListN(underlying.tail).asInstanceOf[T]
+    }
 }
 
-object :: {
-  def unapply[H, T <: AHList](l: HCons[H, T]): Option[(H, T)] = Some((l.head, l.tail))
-}
+// To be generated "on the fly"
 
-case class HCons[+H, +T <: AHList](underlying: Array[Any], start: Int) extends ::[H, T] with HNil {
-  def head: H = underlying(start).asInstanceOf[H]
+object HList5 {
+  def apply
+    [T1, T2, T3, T4, T5]
+    (e1: T1, e2: T2, e3: T3, e4: T4, e5: T5)
+    : T1 :: T2 :: T3 :: T4 :: T5 :: HNil
+      = HListN[T1, T2 :: T3 :: T4 :: T5 :: HNil](Array(e1, e2, e3, e4, e5))
   
-  // with HNil = Hack for this asInstanceOf
-  def tail: T = HCons(underlying, start + 1).asInstanceOf[T]
+  def unapply
+    [T1, T2, T3, T4, T5]
+    (l: HListN[T1, T2 :: T3 :: T4 :: T5 :: HNil])
+    : Option[(T1, T2, T3, T4, T5)]
+      = Some((
+        l.underlying(1).asInstanceOf[T1],
+        l.underlying(2).asInstanceOf[T2],
+        l.underlying(3).asInstanceOf[T3],
+        l.underlying(4).asInstanceOf[T4],
+        l.underlying(5).asInstanceOf[T5]        
+      ))
 }
 
-object AHList {
-  def apply[E1](e1: E1): E1 :: HNil = unsafe(e1)
-  def apply[E1, E2](e1: E1, e2: E2): E1 :: E2 :: HNil = unsafe(e1, e2)
-  def apply[E1, E2, E3](e1: E1, e2: E2, e3: E3): E1 :: E2 :: E3 :: HNil = unsafe(e1, e2, e3)
-  
-  def unsafe[L <: AHList](args: Any*): L = HCons(args.toArray, 0).asInstanceOf[L]
-}
+// Rewriting rules --------------------------------------------------------------------------------
+
+// () => HNil
+// (e1: T1,)                        → HList1(e1)
+// (e1: T1, e2: T2)                 → HList2(e1, e2)
+// (e1: T1, e2: T2, e3: T3)         → HList3(e1, e2, e3)
+// ...
 
 object G {
   def main(args: Array[String]): Unit = {
-    val t: String :: Int :: HNil = AHList("a", 1)
+    println(1)
+    // val t: String :: Int :: HNil = HList("a", 1)
     
-    assert(t.head == "a")
-    assert(t.tail.head == 1)
+    // assert(t.head == "a")
+    // assert(t.tail.head == 1)
     
-    AHList("a", 1) match {
-      case s :: i :: _ =>
-        assert(s == "a")
-        assert(i == 1)
-      }
+    // HList("a", 1) match {
+    //   case s :: i :: _ =>
+    //     assert(s == "a")
+    //     assert(i == 1)
+    //   }
       
-    AHList("a", 1, true) match {
-      case s :: i :: b :: _ =>
-        assert(s == "a")
-        assert(i == 1)
-        assert(b == true)
-    }
+    // HList("a", 1, true) match {
+    //   case s :: i :: b :: _ =>
+    //     assert(s == "a")
+    //     assert(i == 1)
+    //     assert(b == true)
+    // }
   }
 }
