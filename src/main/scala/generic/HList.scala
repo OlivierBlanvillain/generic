@@ -69,7 +69,7 @@ object HList5 {
       ))
 }
 
-// Rewriting rules (values) -----------------------------------------------------------------------
+// Rewriting rule (values) ------------------------------------------------------------------------
 
 // () => HNil
 // (e1: T1,)                → HList1(e1)
@@ -77,13 +77,13 @@ object HList5 {
 // (e1: T1, e2: T2, e3: T3) → HList3(e1, e2, e3)
 // ...
 
-// Rewriting rules (types) ------------------------------------------------------------------------
+// Rewriting rule (types) -------------------------------------------------------------------------
 
 // () => HNil
 // (T1,)    → T1 :: HNil
 // (T1, T2) → T1 :: T2 :: HNil
 
-object Demo {
+object HListDemo {
   def main(args: Array[String]): Unit = {
     // val t: (String, Int, Int, Int, Boolean) = ("s", 1, 2, 3, true)
     val t: String :: Int :: Int :: Int :: Boolean :: HNil = HList5("s", 1, 2, 3, true)
