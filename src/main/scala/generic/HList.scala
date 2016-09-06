@@ -1,5 +1,7 @@
 package generic
 
+// HList interface, as defined in Shapeless -------------------------------------------------------
+
 sealed trait HList
 
 sealed trait HNil extends HList
@@ -35,16 +37,17 @@ final case class HList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4) extends 
 
 // Array based HLists -----------------------------------------------------------------------------
 
-final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends (H :: T) {
+final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal with (H :: T) {
   def head: H = underlying(0).asInstanceOf[H]
   def tail: T = 
     underlying.size match {
+      case i if i < 5 => sys.error("Unexpected invocation")
       case 5 => HList4(underlying(1), underlying(2), underlying(3), underlying(4)).asInstanceOf[T]
       case _ => HListN(underlying.tail).asInstanceOf[T]
     }
 }
 
-// To be generated "on the fly"
+// To be generated "on the fly", for n > 4 --------------------------------------------------------
 
 object HList5 {
   def apply
@@ -58,41 +61,44 @@ object HList5 {
     (l: HListN[T1, T2 :: T3 :: T4 :: T5 :: HNil])
     : Option[(T1, T2, T3, T4, T5)]
       = Some((
-        l.underlying(1).asInstanceOf[T1],
-        l.underlying(2).asInstanceOf[T2],
-        l.underlying(3).asInstanceOf[T3],
-        l.underlying(4).asInstanceOf[T4],
-        l.underlying(5).asInstanceOf[T5]        
+        l.underlying(0).asInstanceOf[T1],
+        l.underlying(1).asInstanceOf[T2],
+        l.underlying(2).asInstanceOf[T3],
+        l.underlying(3).asInstanceOf[T4],
+        l.underlying(4).asInstanceOf[T5]        
       ))
 }
 
-// Rewriting rules --------------------------------------------------------------------------------
+// Rewriting rules (values) -----------------------------------------------------------------------
 
 // () => HNil
-// (e1: T1,)                        → HList1(e1)
-// (e1: T1, e2: T2)                 → HList2(e1, e2)
-// (e1: T1, e2: T2, e3: T3)         → HList3(e1, e2, e3)
+// (e1: T1,)                → HList1(e1)
+// (e1: T1, e2: T2)         → HList2(e1, e2)
+// (e1: T1, e2: T2, e3: T3) → HList3(e1, e2, e3)
 // ...
 
-object G {
+// Rewriting rules (types) ------------------------------------------------------------------------
+
+// () => HNil
+// (T1,)    → T1 :: HNil
+// (T1, T2) → T1 :: T2 :: HNil
+
+object Demo {
   def main(args: Array[String]): Unit = {
-    println(1)
-    // val t: String :: Int :: HNil = HList("a", 1)
+    // val t: (String, Int, Int, Int, Boolean) = ("s", 1, 2, 3, true)
+    val t: String :: Int :: Int :: Int :: Boolean :: HNil = HList5("s", 1, 2, 3, true)
     
-    // assert(t.head == "a")
-    // assert(t.tail.head == 1)
+    assert(t.head == "s")
+    assert(t.tail.head == 1)
     
-    // HList("a", 1) match {
-    //   case s :: i :: _ =>
-    //     assert(s == "a")
-    //     assert(i == 1)
-    //   }
-      
-    // HList("a", 1, true) match {
-    //   case s :: i :: b :: _ =>
-    //     assert(s == "a")
-    //     assert(i == 1)
-    //     assert(b == true)
-    // }
+    t match {
+      // case (s, i1, i2, i3, b) =>
+      case HList5(s, i1, i2, i3, b) =>
+        assert(s  == "s")
+        assert(i1 == 1)
+        assert(i2 == 2)
+        assert(i3 == 3)
+        assert(b  == true)
+    }
   }
 }
