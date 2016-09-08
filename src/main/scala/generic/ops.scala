@@ -93,7 +93,7 @@ package object ops {
 object OpsDemo {
   import ops._
 
-  def main(args: Array[String]): Unit = {
+  // def main(args: Array[String]): Unit = {
     val l1: String :: HNil =
       HList1("s")
 
@@ -105,5 +105,5 @@ object OpsDemo {
 
     // val l4: String :: Double :: Double :: Double :: HNil =
     //   l1 +++ l2
-  }
+  // }
 }
