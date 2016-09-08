@@ -39,7 +39,7 @@ final case class HList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4) extends 
 
 final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal with (H :: T) {
   def head: H = underlying(0).asInstanceOf[H]
-  def tail: T = 
+  def tail: T =
     underlying.size match {
       case i if i < 5 => sys.error("Unexpected invocation")
       case 5 => HList4(underlying(1), underlying(2), underlying(3), underlying(4)).asInstanceOf[T]
@@ -55,7 +55,7 @@ object HList5 {
     (e1: T1, e2: T2, e3: T3, e4: T4, e5: T5)
     : T1 :: T2 :: T3 :: T4 :: T5 :: HNil
       = HListN[T1, T2 :: T3 :: T4 :: T5 :: HNil](Array(e1, e2, e3, e4, e5))
-  
+
   def unapply
     [T1, T2, T3, T4, T5]
     (l: HListN[T1, T2 :: T3 :: T4 :: T5 :: HNil])
@@ -65,7 +65,7 @@ object HList5 {
         l.underlying(1).asInstanceOf[T2],
         l.underlying(2).asInstanceOf[T3],
         l.underlying(3).asInstanceOf[T4],
-        l.underlying(4).asInstanceOf[T5]        
+        l.underlying(4).asInstanceOf[T5]
       ))
 }
 
@@ -87,10 +87,10 @@ object HListDemo {
   def main(args: Array[String]): Unit = {
     // val t: (String, Int, Int, Int, Boolean) = ("s", 1, 2, 3, true)
     val t: String :: Int :: Int :: Int :: Boolean :: HNil = HList5("s", 1, 2, 3, true)
-    
+
     assert(t.head == "s")
     assert(t.tail.head == 1)
-    
+
     t match {
       // case (s, i1, i2, i3, b) =>
       case HList5(s, i1, i2, i3, b) =>

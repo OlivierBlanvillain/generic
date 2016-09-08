@@ -81,8 +81,7 @@ package object ops {
 
   // Type level "only" computation of type Out ----------------------------------------------------
 
-  trait PhantomAny
-  trait PhantomAppender[L1 <: HList, L2 <: HList] extends PhantomAny { type Out <: HList }
+  trait PhantomAppender[L1 <: HList, L2 <: HList] { type Out <: HList }
   object PhantomAppender {
     def phantom[L1 <: HList, L2 <: HList, O <: HList] = new PhantomAppender[L1, L2] { type Out = O }
     implicit def caseHNil[L <: HList]: PhantomAppender[HNil, L] { type Out = L } = phantom
@@ -106,9 +105,5 @@ object OpsDemo {
 
     // val l4: String :: Double :: Double :: Double :: HNil =
     //   l1 +++ l2
-
-    // Dotty weirdness?:
-    // implicit def aaa: Appender[Int :: HNil, HNil] = null
-    // implicitly[Appender[Int :: Int :: HNil, HNil]]
   }
 }
