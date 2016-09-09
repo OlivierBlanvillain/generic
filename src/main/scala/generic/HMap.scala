@@ -1,8 +1,12 @@
-package hmap
+package generic
+
+// Type level natural numbers ---------------------------------------------------------------------
 
 sealed trait Nat
 sealed trait Succ[P <: Nat] extends Nat
 sealed trait Zero extends Nat
+
+// Nat → Int type class ---------------------------------------------------------------------------
 
 case class ToInt[N <: Nat](i: Int)
 
@@ -12,17 +16,11 @@ object ToInt {
   implicit val two: ToInt[Succ[Succ[Zero]]] = ToInt[Succ[Succ[Zero]]](2)
 }
 
-sealed trait HList
-final case object HNil extends HList
-final case class HCons[+H, +T <: HList](head: H, tail: T) extends HList
+// HMap entries -----------------------------------------------------------------------------------
 
 final case class HEntry[K, V](value: V)
 
-object ops {
-  implicit class hmapGet[M <: HList](m: M) {
-    def get[K, I <: Nat, O](implicit g: Get.Aux[K, M, I, O], i: ToInt[I]): O = ???
-  }
-}
+// HMap Accessor type class -----------------------------------------------------------------------
 
 trait Get[K, M] {
   type Index <: Nat
@@ -33,12 +31,18 @@ object Get {
   type Aux[K, M, I <: Nat, O] = Get[K, M] { type Index = I; type Out = O }
 
   implicit def headCase[K, V, T <: HList]
-    : Aux[K, HCons[HEntry[K, V], T], Zero, V] =
-      new Get[K, HCons[HEntry[K, V], T]] { type Index = Zero; type Out = V }
+    : Aux[K, HEntry[K, V] :: T, Zero, V] =
+      new Get[K, HEntry[K, V] :: T] { type Index = Zero; type Out = V }
 
   implicit def headTail[K, V, T <: HList, I <: Nat, O](implicit t: Aux[K, T, I, O])
-    : Aux[K, HCons[HEntry[K, V], T], Succ[I], O] =
-      new Get[K, HCons[HEntry[K, V], T]] { type Index = Succ[I]; type Out = O }
+    : Aux[K, HEntry[K, V] :: T, Succ[I], O] =
+      new Get[K, HEntry[K, V] :: T] { type Index = Succ[I]; type Out = O }
+}
+
+object hmapOps {
+  implicit class hmapGet[M <: HList](m: M) {
+    def get[K, I <: Nat, O](implicit g: Get.Aux[K, M, I, O], i: ToInt[I]): O = ???
+  }
 }
 
 object HMapDemo {
@@ -49,6 +53,6 @@ object HMapDemo {
 
   val map = HCons(f, HCons(l, HCons(i, HCons(b, HNil))))
 
-  import ops._
+  import hmapOps._
   // val index: Boolean = map.get[K = "cat"]
 }

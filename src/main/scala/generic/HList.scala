@@ -11,13 +11,31 @@ sealed trait ::[+H, +T <: HList] extends HList {
   def tail: T
 }
 
-// Default, user facing HLists implementions ------------------------------------------------------
+// User facing implementions ----------------------------------------------------------------------
 
 final case object HNil extends HNil
 
-final case class HCons[+H, +T <: HList](head: H, tail: T) extends (H :: T)
+// Emulating the HCons algebraic structure by case analysis ---------------------------------------
+// final case class HCons[+H, +T <: HList](head: H, tail: T) extends (H :: T)
 
-// Optimized, case class based HLists, for size < 4 -----------------------------------------------
+object HCons {
+  def apply[H, T <: HList](h: H, t: T): H :: T =
+    t match {
+      case HNil                   => HList1(h).asInstanceOf[H :: T] // T =:= HNil, but dotc doesn't know...
+      case HList1(e1)             => HList2(h, e1).asInstanceOf[H :: T]
+      case HList2(e1, e2)         => HList3(h, e1, e2).asInstanceOf[H :: T]
+      case HList3(e1, e2, e3)     => HListN[H, T](Array(h, e1, e2, e3))
+      case HListN(underlying)     =>
+        val result = Array.ofDim[Any](underlying.size + 1)
+        Array.copy(underlying, 0, result, 1, underlying.size)
+        result(0) = h
+        HListN[H, T](result)
+    }
+
+  def unapply[H, T <: HList](l: H :: T): Option[(H, T)] = Some((l.head, l.tail))
+}
+
+// Optimized, case class based HLists, for size < 3 -----------------------------------------------
 
 final case class HList1[T1](e1: T1) extends (T1 :: HNil) {
   def head: T1 = e1
@@ -34,24 +52,19 @@ final case class HList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends (T1 :: T2 ::
   def tail: T2 :: T3 :: HNil = HList2(e2, e3)
 }
 
-final case class HList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4) extends (T1 :: T2 :: T3 :: T4 :: HNil) {
-  def head: T1 = e1
-  def tail: T2 :: T3 :: T4 :: HNil = HList3(e2, e3, e4)
-}
-
-// Array based HLists, for size > 4 ---------------------------------------------------------------
+// Array based HLists, for size > 3 ---------------------------------------------------------------
 
 final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal with (H :: T) {
   def head: H = underlying(0).asInstanceOf[H]
   def tail: T =
     (underlying.size match {
-      case i if i < 5 => sys.error("Unexpected invocation")
-      case 5 => HList4(underlying(1), underlying(2), underlying(3), underlying(4))
+      case i if i < 4 => sys.error("Unexpected invocation: HListN should never be instantiated with size < 3")
+      case 4 => HList3(underlying(1), underlying(2), underlying(3))
       case _ => HListN(underlying.tail)
     }).asInstanceOf[T]
 }
 
-// To be generated "on the fly", for n > 4 --------------------------------------------------------
+// To be generated "on the fly", for n > 3 --------------------------------------------------------
 
 object HList5 {
   def apply
@@ -73,19 +86,30 @@ object HList5 {
       ))
 }
 
-// Rewriting rule (values) ------------------------------------------------------------------------
+// FrontEnd rewriting rule ------------------------------------------------------------------------
 
-// () => HNil
-// (e1: T1,)                → HList1(e1)
-// (e1: T1, e2: T2)         → HList2(e1, e2)
-// (e1: T1, e2: T2, e3: T3) → HList3(e1, e2, e3)
+// ()               → HNil
+// (e1,)            → HCons(e1, HNil)
+// (e1, e2)         → HCons(e1, HCons(e2, HNil))
+// (e1, e2, e3)     → HCons(e1, HCons(e2, HCons(e3, HNil)))
+// (e1, e2, e3, e4) → HCons(e1, HCons(e2, HCons(e3, HCons(e4, HNil))))
 // ...
+
+// Optimization rewriting rule --------------------------------------------------------------------
+
+// HCons(e1, HNil)                                  → HList1(e1)
+// HCons(e1, HCons(e2, HNil))                       → HList2(e1, e2)
+// HCons(e1, HCons(e2, HCons(e3, HNil)))            → HList3(e1, e2, e3)
+// HCons(e1, HCons(e2, HCons(e3, HCons(e4, HNil)))) → HListN(Array(e1, e2, e3, e4))
 
 // Rewriting rule (types) -------------------------------------------------------------------------
 
-// () => HNil
-// (T1,)    → T1 :: HNil
-// (T1, T2) → T1 :: T2 :: HNil
+// ()               → HNil
+// (T1,)            → T1 :: HNil
+// (T1, T2)         → T1 :: T2 :: HNil
+// (T1, T2, T3)     → T1 :: T2 :: T3 :: HNil
+// (T1, T2, T3, T4) → T1 :: T2 :: T3 :: T4 :: HNil
+// ...
 
 object HListDemo {
   def main(args: Array[String]): Unit = {
