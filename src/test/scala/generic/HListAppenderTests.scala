@@ -1,7 +1,7 @@
 package generic
 
 object HListAppenderTests {
-  import hlistOps._
+  import syntax.append._
 
   val l1: String :: HNil =
     HList1("s")
@@ -13,7 +13,7 @@ object HListAppenderTests {
     l1 ++ l2
 
   val l4: String :: Double :: Double :: Double :: HNil =
-    l1 +++ l2
+    l1 f_++ l2
 
   assert(l3 == l4)
 }

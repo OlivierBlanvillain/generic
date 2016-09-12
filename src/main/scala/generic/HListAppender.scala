@@ -55,12 +55,14 @@ object PhantomAppender {
     (implicit p: Aux[T, L, O]): Aux[H :: T, L, H :: O] = aux
 }
 
-package object hlistOps {
-  implicit class AppendableHList[L1 <: HList](l1: L1) {
-    def ++[L2 <: HList](l2: L2)(implicit a: Appender[L1, L2]): a.Out = a(l1, l2)
-  }
+trait AppendSyntax {
+  object append {
+    implicit class AppendableHList[L1 <: HList](l1: L1) {
+      def ++[L2 <: HList](l2: L2)(implicit a: Appender[L1, L2]): a.Out = a(l1, l2)
+    }
 
-  implicit class FastAppendableHList[L1 <: HList](l1: L1) {
-    def +++[L2 <: HList](l2: L2)(implicit a: FastAppender[L1, L2]): a.Out = a(l1, l2)
+    implicit class FastAppendableHList[L1 <: HList](l1: L1) {
+      def f_++[L2 <: HList](l2: L2)(implicit a: FastAppender[L1, L2]): a.Out = a(l1, l2)
+    }
   }
 }
