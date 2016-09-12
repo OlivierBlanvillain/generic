@@ -1,23 +1,5 @@
 package generic
 
-// Type level natural numbers ---------------------------------------------------------------------
-
-sealed trait Nat
-sealed trait Succ[P <: Nat] extends Nat
-sealed trait Zero extends Nat
-
-// Nat → Int type class ---------------------------------------------------------------------------
-
-case class ToInt[N <: Nat](i: Int)
-
-object ToInt {
-  implicit val zero: ToInt[Zero] = ToInt[Zero](0)
-  implicit val one: ToInt[Succ[Zero]] = ToInt[Succ[Zero]](1)
-  implicit val two: ToInt[Succ[Succ[Zero]]] = ToInt[Succ[Succ[Zero]]](2)
-}
-
-// HMap entries -----------------------------------------------------------------------------------
-
 final case class HEntry[K, V](value: V)
 
 // HMap Accessor type class -----------------------------------------------------------------------
