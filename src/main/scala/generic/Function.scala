@@ -35,4 +35,3 @@ object FunDemo {
   // f(1, "", 3d)
   f(HCons(1, HCons("", HCons(3d, HNil))))
 }
-

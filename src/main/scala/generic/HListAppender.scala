@@ -8,45 +8,38 @@ trait Appender[L1 <: HList, L2 <: HList] {
 }
 
 object Appender {
-  def apply[L1 <: HList, L2 <: HList](implicit a: Appender[L1, L2]): Appender[L1, L2] = a
+  type Aux[L1 <: HList, L2 <: HList, O <: HList] = Appender[L1, L2] { type Out = O }
 
-  implicit def caseHNil[L <: HList]: Appender[HNil, L] { type Out = L } =
+  implicit def caseHNil[L <: HList]: Aux[HNil, L, L] =
     new Appender[HNil, L] {
       type Out = L
       def apply(l1: HNil, l2: L): L = l2
     }
 
-  implicit def caseHCons[H, T <: HList, L <: HList]
-    (implicit a: Appender[T, L]): Appender[H :: T, L] { type Out = H :: a.Out } =
+  implicit def caseHCons[H, T <: HList, L <: HList, O <: HList]
+    (implicit a: Aux[T, L, O]): Aux[H :: T, L, H :: O] =
       new Appender[H :: T, L] {
-        type Out = H :: a.Out
-        def apply(l1: H :: T, l2: L): H :: a.Out =
-          HCons(l1.head, a(l1.tail, l2))
+        type Out = H :: O
+        def apply(l1: H :: T, l2: L): H :: O = HCons(l1.head, a(l1.tail, l2))
       }
-}
-
-trait LowLevelAppender[L1 <: HList, L2 <: HList] {
-  type Out <: HList
-  def apply(l1: L1, l2: L2): Out
 }
 
 // Low level (Array based) HLists Appender --------------------------------------------------------
 
-object LowLevelAppender {
-  implicit def LowLevelAppender[L1 <: HList, L2 <: HList]
-    (implicit p: PhantomAppender[L1, L2]): LowLevelAppender[L1, L2] { type Out = p.Out } =
-      new LowLevelAppender[L1, L2] {
+trait FastAppender[L1 <: HList, L2 <: HList] {
+  type Out <: HList
+  def apply(l1: L1, l2: L2): Out
+}
+
+object FastAppender {
+  type Aux[L1 <: HList, L2 <: HList, O <: HList] = FastAppender[L1, L2] { type Out = O }
+
+  implicit def lowLevelAppender[L1 <: HList, L2 <: HList, O <: HList]
+    (implicit p: PhantomAppender.Aux[L1, L2, O]): FastAppender[L1, L2] { type Out = O } =
+      new FastAppender[L1, L2] {
         type Out = p.Out
-        def apply(l1: L1, l2: L2): Out = {
-          def array(l: HList): Array[Any] = l match {
-            case HNil               => Array.empty[Any]
-            case HList1(e1)         => Array(e1)
-            case HList2(e1, e2)     => Array(e1, e2)
-            case HList3(e1, e2, e3) => Array(e1, e2, e3)
-            case HListN(underlying) => underlying
-          }
-          HListN(Array.concat(array(l1), array(l2))).asInstanceOf[Out]
-        }
+        def apply(l1: L1, l2: L2): Out =
+          HListN(Array.concat(l1.underlying, l2.underlying)).asInstanceOf[Out]
       }
 }
 
@@ -54,10 +47,12 @@ object LowLevelAppender {
 
 trait PhantomAppender[L1 <: HList, L2 <: HList] { type Out <: HList }
 object PhantomAppender {
-  def phantom[L1 <: HList, L2 <: HList, O <: HList] = new PhantomAppender[L1, L2] { type Out = O }
-  implicit def caseHNil[L <: HList]: PhantomAppender[HNil, L] { type Out = L } = phantom
-  implicit def caseHCons[H, T <: HList, L <: HList]
-    (implicit p: PhantomAppender[T, L]): PhantomAppender[H :: T, L] { type Out = H :: p.Out } = phantom
+  type Aux[L1 <: HList, L2 <: HList, O <: HList] =     PhantomAppender[L1, L2] { type Out = O }
+  def  aux[L1 <: HList, L2 <: HList, O <: HList] = new PhantomAppender[L1, L2] { type Out = O }
+
+  implicit def caseHNil[L <: HList]: Aux[HNil, L, L] = aux
+  implicit def caseHCons[H, T <: HList, L <: HList, O <: HList]
+    (implicit p: Aux[T, L, O]): Aux[H :: T, L, H :: O] = aux
 }
 
 package object hlistOps {
@@ -65,25 +60,7 @@ package object hlistOps {
     def ++[L2 <: HList](l2: L2)(implicit a: Appender[L1, L2]): a.Out = a(l1, l2)
   }
 
-  implicit class LowLevelAppendableHList[L1 <: HList](l1: L1) {
-    def +++[L2 <: HList](l2: L2)(implicit a: LowLevelAppender[L1, L2]): a.Out = a(l1, l2)
+  implicit class FastAppendableHList[L1 <: HList](l1: L1) {
+    def +++[L2 <: HList](l2: L2)(implicit a: FastAppender[L1, L2]): a.Out = a(l1, l2)
   }
-}
-
-object HListAppenderDemo {
-  import hlistOps._
-
-  // def main(args: Array[String]): Unit = {
-    val l1: String :: HNil =
-      HList1("s")
-
-    val l2: Double :: Double :: Double :: HNil =
-      HList3(1d, 2d, 3d)
-
-    val l3: String :: Double :: Double :: Double :: HNil =
-      l1 ++ l2
-
-    // val l4: String :: Double :: Double :: Double :: HNil =
-    //   l1 +++ l2
-  // }
 }

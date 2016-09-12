@@ -2,7 +2,9 @@ package generic
 
 // HList interface, as defined in Shapeless -------------------------------------------------------
 
-sealed trait HList
+sealed trait HList {
+  def underlying: Array[Any]
+}
 
 sealed trait HNil extends HList
 
@@ -13,7 +15,10 @@ sealed trait ::[H, T <: HList] extends HList {
 
 // User facing implementions ----------------------------------------------------------------------
 
-final case object HNil extends HNil
+final case object HNil extends HNil {
+  val underlying: Array[Any] = Array.empty[Any]
+  override def toString() = "()"
+}
 
 // Emulating the HCons algebraic structure by case analysis ---------------------------------------
 // final case class HCons[+H, +T <: HList](head: H, tail: T) extends (H :: T)
@@ -40,16 +45,22 @@ object HCons {
 final case class HList1[T1](e1: T1) extends (T1 :: HNil) {
   def head: T1 = e1
   def tail: HNil = HNil
+  def underlying: Array[Any] = Array(e1)
+  override def toString() = "(" + e1 + ", )"
 }
 
 final case class HList2[T1, T2](e1: T1, e2: T2) extends (T1 :: T2 :: HNil) {
   def head: T1 = e1
   def tail: T2 :: HNil = HList1(e2)
+  def underlying: Array[Any] = Array(e1, e2)
+  override def toString() = "(" + _1 + "," + _2 + ")"
 }
 
 final case class HList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends (T1 :: T2 :: T3 :: HNil) {
   def head: T1 = e1
   def tail: T2 :: T3 :: HNil = HList2(e2, e3)
+  def underlying: Array[Any] = Array(e1, e2, e3)
+  override def toString() = "(" + _1 + "," + _2 + "," + _3 + ")"
 }
 
 // Array based HLists for large sizes -------------------------------------------------------------
@@ -62,6 +73,14 @@ final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal 
       case 4 => HList3(underlying(1), underlying(2), underlying(3))
       case _ => HListN(underlying.tail)
     }).asInstanceOf[T]
+
+  override def toString() = underlying.mkString("(", ", ", ")")
+
+  override def equals(o: Any): Boolean =
+    o match {
+      case l: HListN[_, _] => l.underlying.sameElements(underlying)
+      case _ => false
+    }
 }
 
 // FrontEnd rewriting for values ------------------------------------------------------------------
@@ -107,24 +126,3 @@ final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal 
 //     val e2 = l.underlying(1).asInstanceOf[T2]
 //     val e3 = l.underlying(2).asInstanceOf[T3]
 //     val e4 = l.underlying(3).asInstanceOf[T4]
-
-object HListDemo {
-  def main(args: Array[String]): Unit = {
-    // val t: (String, Int, Int, Int, Boolean) = ("s", 1, 2, 3, true)
-    val t: String :: Int :: Int :: Int :: Boolean :: HNil =
-      HCons("s", HCons(1, HCons(2, HCons(3, HCons(true, HNil)))))
-
-    assert(t.head == "s")
-    assert(t.tail.head == 1)
-
-    t match {
-      // case (s, i1, i2, i3, b) =>
-      case HCons(s, HCons(i1, HCons(i2, HCons(i3, HCons(b, HNil))))) =>
-        assert(s  == "s")
-        assert(i1 == 1)
-        assert(i2 == 2)
-        assert(i3 == 3)
-        assert(b  == true)
-    }
-  }
-}

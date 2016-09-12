@@ -18,7 +18,7 @@ object Nat {
 
 // Nat → Int type class ---------------------------------------------------------------------------
 
-case class ToInt[N <: Nat](i: Int)
+case class ToInt[N <: Nat](value: Int) extends AnyVal
 
 object ToInt {
   implicit val _0toInt: ToInt[Zero] = ToInt[Zero](0)
