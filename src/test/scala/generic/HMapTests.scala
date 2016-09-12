@@ -19,10 +19,20 @@ object HMapTests {
   implicitly[PhantomGet["name", MapType]]
   implicitly[PhantomGet["genre", MapType]]
 
-  import hmapOps._
+  import syntax.get._
 
   assert(map.get("name") == "foo")
   assert(map.get("genre") == true)
   assert(map.get("moneyz") == 123)
   assert(map.get("cat") == "bar")
+
+  import syntax.entry._
+  // (
+  //   "name"   -- "foo",
+  //   "genre"  -- true,
+  //   "moneyz" -- 123,
+  //   "cat"    -- "bar"
+  // )
+  val map2: MapType =
+    HCons("name" -- "foo", HCons("genre" -- true, HCons("moneyz" -- 123, HCons("cat" -- "bar", HNil))))
 }

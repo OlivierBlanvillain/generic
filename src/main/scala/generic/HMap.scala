@@ -17,12 +17,22 @@ object PhantomGet {
     (implicit t: Aux[K, T, I]): Aux[K, H :: T, Succ[I]] = aux
 }
 
-object hmapOps {
-  implicit class hmapGet[M <: HList](m: M) {
-    def get[K, V, I <: Nat](k: K)
-      (implicit
-        g: PhantomGet.Aux[k.type, M, I],
-        a: FastAt.Aux[M, I, HEntry[k.type, V]]
-      ): V = a(m).value
+trait GetSyntax {
+  object get {
+    implicit class hmapGet[M <: HList](m: M) {
+      def get[K, V, I <: Nat](k: K)
+        (implicit
+          g: PhantomGet.Aux[k.type, M, I],
+          a: FastAt.Aux[M, I, HEntry[k.type, V]]
+        ): V = a(m).value
+    }
+  }
+}
+
+trait EntrySyntax {
+  object entry {
+    implicit class EntryAssoc[A](a: A) {
+      def -- [B](b: B): HEntry[A, B] = HEntry(b)
+    }
   }
 }
