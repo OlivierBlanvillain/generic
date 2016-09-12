@@ -8,6 +8,7 @@ sealed trait HList {
 
 sealed trait HNil extends HList
 
+// Should be [+H, +T <: HList], but that breaks dotc implicit search
 sealed trait ::[H, T <: HList] extends HList {
   def head: H
   def tail: T
@@ -17,11 +18,11 @@ sealed trait ::[H, T <: HList] extends HList {
 
 final case object HNil extends HNil {
   val underlying: Array[Any] = Array.empty[Any]
-  override def toString() = "()"
+  override def toString(): String = "()"
 }
 
 // Emulating the HCons algebraic structure by case analysis ---------------------------------------
-// final case class HCons[+H, +T <: HList](head: H, tail: T) extends (H :: T)
+// final case class HCons[H, T <: HList](head: H, tail: T) extends (H :: T)
 
 object HCons {
   def apply[H, T <: HList](h: H, t: T): H :: T =
@@ -46,21 +47,21 @@ final case class HList1[T1](e1: T1) extends (T1 :: HNil) {
   def head: T1 = e1
   def tail: HNil = HNil
   def underlying: Array[Any] = Array(e1)
-  override def toString() = "(" + e1 + ", )"
+  override def toString(): String = s"($e1,)"
 }
 
 final case class HList2[T1, T2](e1: T1, e2: T2) extends (T1 :: T2 :: HNil) {
   def head: T1 = e1
   def tail: T2 :: HNil = HList1(e2)
   def underlying: Array[Any] = Array(e1, e2)
-  override def toString() = "(" + _1 + "," + _2 + ")"
+  override def toString(): String = s"($e1, $e2)"
 }
 
 final case class HList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends (T1 :: T2 :: T3 :: HNil) {
   def head: T1 = e1
   def tail: T2 :: T3 :: HNil = HList2(e2, e3)
   def underlying: Array[Any] = Array(e1, e2, e3)
-  override def toString() = "(" + _1 + "," + _2 + "," + _3 + ")"
+  override def toString(): String = s"($e1, $e2, $e3)"
 }
 
 // Array based HLists for large sizes -------------------------------------------------------------
@@ -82,47 +83,3 @@ final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal 
       case _ => false
     }
 }
-
-// FrontEnd rewriting for values ------------------------------------------------------------------
-
-// ()               → HNil
-// (e1,)            → HCons(e1, HNil)
-// (e1, e2)         → HCons(e1, HCons(e2, HNil))
-// (e1, e2, e3)     → HCons(e1, HCons(e2, HCons(e3, HNil)))
-// (e1, e2, e3, e4) → HCons(e1, HCons(e2, HCons(e3, HCons(e4, HNil))))
-// ...
-
-// FrontEnd rewriting for types -------------------------------------------------------------------
-
-// ()               → HNil
-// (T1,)            → T1 :: HNil
-// (T1, T2)         → T1 :: T2 :: HNil
-// (T1, T2, T3)     → T1 :: T2 :: T3 :: HNil
-// (T1, T2, T3, T4) → T1 :: T2 :: T3 :: T4 :: HNil
-// ...
-
-// FrontEnd rewriting for assessors ---------------------------------------------------------------
-
-// t._1 → t.at[_1]
-// t._2 → t.at[_2]
-// t._3 → t.at[_3]
-// t._4 → t.at[_4]
-
-// Optimization rewriting rule for creation -------------------------------------------------------
-
-// HCons(e1, HNil)                                  → HList1(e1)
-// HCons(e1, HCons(e2, HNil))                       → HList2(e1, e2)
-// HCons(e1, HCons(e2, HCons(e3, HNil)))            → HList3(e1, e2, e3)
-// HCons(e1, HCons(e2, HCons(e3, HCons(e4, HNil)))) → HListN(Array(e1, e2, e3, e4))
-
-// Optimization rewriting rule for pattern matching -----------------------------------------------
-
-// case HCons(e1, HNil) =>                          → case HList1(e1) =>
-// case HCons(e1, HCons(e2, HNil)) =>               → case HList2(e1, e2) =>
-// case HCons(e1, HCons(e2, HCons(e3, HNil))) =>    → case HList3(e1, e2, e3) =>
-// case HCons(e1, HCons(e2, HCons(e3, HCons(e4, HNil)))) => →
-//   case HListN(underlying) =>
-//     val e1 = l.underlying(0).asInstanceOf[T1]
-//     val e2 = l.underlying(1).asInstanceOf[T2]
-//     val e3 = l.underlying(2).asInstanceOf[T3]
-//     val e4 = l.underlying(3).asInstanceOf[T4]
