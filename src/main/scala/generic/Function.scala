@@ -23,16 +23,16 @@ trait Fun[-I <: HList, +O] {
 // (T0, T1) => R → Fun[T0 :: T1 :: HNil, R]
 
 object FunDemo {
-  // def f(i: Int, s1: String, s2: String, o: Object, d: Double): Boolean =
+  // def f(i: Int, o: Object, d: Double): Boolean =
   //   true
-  val f = new Fun[Int :: String :: String :: Object :: Double :: HNil, Boolean] {
-    def apply(hl: Int :: String :: String :: Object :: Double :: HNil): Boolean =
-      hl match { case HList5(i, s1, s2, o, d) =>
+  val f = new Fun[Int :: Object :: Double :: HNil, Boolean] {
+    def apply(hl: Int :: Object :: Double :: HNil): Boolean =
+      hl match { case HCons(i, HCons(o, HCons(d, HNil))) =>
         true
       }
   }
-  
-  // f(1, "", "", "", 3d)
-  f(HList5(1, "", "", "", 3d))
+
+  // f(1, "", 3d)
+  f(HCons(1, HCons("", HCons(3d, HNil))))
 }
 

@@ -39,11 +39,11 @@ object LowLevelAppender {
         type Out = p.Out
         def apply(l1: L1, l2: L2): Out = {
           def array(l: HList): Array[Any] = l match {
-            case HNil                   => Array.empty[Any]
-            case HList1(e1)             => Array(e1)
-            case HList2(e1, e2)         => Array(e1, e2)
-            case HList3(e1, e2, e3)     => Array(e1, e2, e3)
-            case HListN(underlying)     => underlying
+            case HNil               => Array.empty[Any]
+            case HList1(e1)         => Array(e1)
+            case HList2(e1, e2)     => Array(e1, e2)
+            case HList3(e1, e2, e3) => Array(e1, e2, e3)
+            case HListN(underlying) => underlying
           }
           HListN(Array.concat(array(l1), array(l2))).asInstanceOf[Out]
         }
