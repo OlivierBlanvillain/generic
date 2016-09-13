@@ -53,3 +53,18 @@ case HCons(e1, HCons(e2, HCons(e3, HCons(e4, HNil)))) => →
     val e3 = l.underlying(2).asInstanceOf[T3]
     val e4 = l.underlying(3).asInstanceOf[T4]
 ```
+
+Why would be need ad hoc optimization rules (example of tuple creation unrolling):
+
+(e1, e2, e3, e4, e5)
+~ HCons(e1, HCons(e2, HCons(e3, HCons(e4, HCons(e5, HNil)))))
+~ HCons(e1, HCons(e2, HCons(e3, HCons(e4, HList1(e5)))))
+~ HCons(e1, HCons(e2, HCons(e3, HList2(e4, e5))))
+~ HCons(e1, HCons(e2, HList3(e3, e4, e5)))
+~ HCons(e1, HListN(Array(e2, e3, e4, e5)))
+
+~ val underlying = Array(e2, e3, e4, e5)
+  val result = Array.ofDim[Any](underlying.size + 1)
+  Array.copy(underlying, 0, result, 1, underlying.size)
+  result(0) = e1
+  HListN[H, T](result)

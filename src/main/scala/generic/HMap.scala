@@ -1,6 +1,6 @@
 package generic
 
-// Should be `K <: Singleton` but inference for `--` does not quite work with that (related: #1507).
+// Should be `K <: Singleton` but inference for `--` does not quite work with that.
 final case class HEntry[K, V](value: V)
 
 // HMap Accessor type class -----------------------------------------------------------------------
