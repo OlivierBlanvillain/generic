@@ -10,4 +10,3 @@ object Tests {
     println("======== All tests passed! ========")
   }
 }
-

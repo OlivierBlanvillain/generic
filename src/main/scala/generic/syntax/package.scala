@@ -5,3 +5,4 @@ package object syntax
      with AppendSyntax
      with GetSyntax
      with EntrySyntax
+     with NatSyntax

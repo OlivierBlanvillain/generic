@@ -39,7 +39,7 @@ object FastAt {
       new FastAt[L, N] {
         type Out = O
         def apply(l: L): Out =
-          l.underlying(i.value).asInstanceOf[Out]
+          l.underlying(i.int).asInstanceOf[Out]
       }
 }
 

@@ -1,6 +1,6 @@
 package generic
 
-// HList interface, as defined in Shapeless -------------------------------------------------------
+// HList types, as defined in Shapeless -----------------------------------------------------------
 
 sealed trait HList {
   def underlying: Array[Any]
@@ -14,7 +14,7 @@ sealed trait ::[H, T <: HList] extends HList {
   def tail: T
 }
 
-// User facing implementions ----------------------------------------------------------------------
+// HList values -----------------------------------------------------------------------------------
 
 final case object HNil extends HNil {
   val underlying: Array[Any] = Array.empty[Any]

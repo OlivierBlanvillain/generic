@@ -1,5 +1,6 @@
 package generic
 
+// Should be `K <: Singleton` but inference for `--` does not quite work with that (related: #1507).
 final case class HEntry[K, V](value: V)
 
 // HMap Accessor type class -----------------------------------------------------------------------
@@ -31,8 +32,8 @@ trait GetSyntax {
 
 trait EntrySyntax {
   object entry {
-    implicit class EntryAssoc[A](a: A) {
-      def -- [B](b: B): HEntry[A, B] = HEntry(b)
+    implicit class EntryAssoc[K](k: K) {
+      def -- [V](value: V): HEntry[K, V] = HEntry(value)
     }
   }
 }
