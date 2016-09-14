@@ -20,7 +20,10 @@ object Appender {
     (implicit a: Aux[T, L, O]): Aux[H :: T, L, H :: O] =
       new Appender[H :: T, L] {
         type Out = H :: O
-        def apply(l1: H :: T, l2: L): H :: O = HCons(l1.head, a(l1.tail, l2))
+        def apply(l1: H :: T, l2: L): H :: O = {
+          val HCons(head, tail) = l1
+          HCons(head, a(tail, l2))
+        }
       }
 }
 
