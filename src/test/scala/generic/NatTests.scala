@@ -1,17 +1,17 @@
 package generic
 
 object NatTests {
-  assert(implicitly[ToInt[Zero]].out == 0)
-  assert(implicitly[ToInt[Succ[Zero]]].out == 1)
-  assert(implicitly[ToInt[Succ[Succ[Zero]]]].out == 2)
-  assert(implicitly[ToInt[Succ[Succ[Succ[Zero]]]]].out == 3)
-  assert(implicitly[ToInt[Succ[Succ[Succ[Succ[Zero]]]]]].out == 4)
-
   import syntax.nat._
 
-  int(nat(0)) == 0
-  int(nat(1)) == 1
-  int(nat(2)) == 2
-  int(nat(3)) == 3
-  int(nat(4)) == 4
+  assert(int[_0] == 0)
+  assert(int[_1] == 1)
+  assert(int[_2] == 2)
+  assert(int[_3] == 3)
+  assert(int[_4] == 4)
+
+  nat(0): Option[_0]
+  nat(1): Option[_1]
+  nat(2): Option[_2]
+  nat(3): Option[_3]
+  nat(4): Option[_4]
 }

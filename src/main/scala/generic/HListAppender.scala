@@ -55,6 +55,8 @@ object PhantomAppender {
     (implicit p: Aux[T, L, O]): Aux[H :: T, L, H :: O] = aux
 }
 
+// Syntax -----------------------------------------------------------------------------------------
+
 trait AppendSyntax {
   object append {
     implicit class AppendableHList[L1 <: HList](l1: L1) {

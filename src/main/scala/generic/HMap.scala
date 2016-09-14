@@ -3,8 +3,6 @@ package generic
 // Should be `K <: Singleton` but inference for `--` does not quite work with that.
 final case class HEntry[K, V](value: V)
 
-// HMap Accessor type class -----------------------------------------------------------------------
-
 trait PhantomGet[K, M <: HList] {
   type Index <: Nat
 }
@@ -24,7 +22,7 @@ trait GetSyntax {
       def get[K, V, I <: Nat](k: K)
         (implicit
           g: PhantomGet.Aux[k.type, M, I],
-          a: FastAt.Aux[M, I, HEntry[k.type, V]]
+          a: At.Aux[M, I, HEntry[k.type, V]]
         ): V = a(m).value
     }
   }
