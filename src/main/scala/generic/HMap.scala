@@ -1,7 +1,11 @@
 package generic
 
+// An HMap is an HList with HEntry elements. We are reusing HList for it's nice syntax
+
 // Should be `K <: Singleton` but inference for `--` does not quite work with that.
 final case class HEntry[K, V](value: V)
+
+// Accessor type class to compute the element of type K in a HMap L -------------------------------
 
 trait PhantomGet[K, M <: HList] {
   type Index <: Nat
@@ -15,6 +19,8 @@ object PhantomGet {
   implicit def getTail[K, H, T <: HList, I <: Nat]
     (implicit t: Aux[K, T, I]): Aux[K, H :: T, Succ[I]] = aux
 }
+
+// Syntax -----------------------------------------------------------------------------------------
 
 trait GetSyntax {
   object get {

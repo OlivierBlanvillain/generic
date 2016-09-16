@@ -2,23 +2,23 @@ package generic
 
 // "Algebraic" HLists Appender, as defined in Shapeless -------------------------------------------
 
-trait Appender[L1 <: HList, L2 <: HList] {
+trait HConsAppender[L1 <: HList, L2 <: HList] {
   type Out <: HList
   def apply(l1: L1, l2: L2): Out
 }
 
-object Appender {
-  type Aux[L1 <: HList, L2 <: HList, O <: HList] = Appender[L1, L2] { type Out = O }
+object HConsAppender {
+  type Aux[L1 <: HList, L2 <: HList, O <: HList] = HConsAppender[L1, L2] { type Out = O }
 
   implicit def caseHNil[L <: HList]: Aux[HNil, L, L] =
-    new Appender[HNil, L] {
+    new HConsAppender[HNil, L] {
       type Out = L
       def apply(l1: HNil, l2: L): L = l2
     }
 
   implicit def caseHCons[H, T <: HList, L <: HList, O <: HList]
     (implicit a: Aux[T, L, O]): Aux[H :: T, L, H :: O] =
-      new Appender[H :: T, L] {
+      new HConsAppender[H :: T, L] {
         type Out = H :: O
         def apply(l1: H :: T, l2: L): H :: O = {
           val HCons(head, tail) = l1
@@ -29,17 +29,17 @@ object Appender {
 
 // Low level (Array based) HLists Appender --------------------------------------------------------
 
-trait FastAppender[L1 <: HList, L2 <: HList] {
+trait Appender[L1 <: HList, L2 <: HList] {
   type Out <: HList
   def apply(l1: L1, l2: L2): Out
 }
 
-object FastAppender {
-  type Aux[L1 <: HList, L2 <: HList, O <: HList] = FastAppender[L1, L2] { type Out = O }
+object Appender {
+  type Aux[L1 <: HList, L2 <: HList, O <: HList] = Appender[L1, L2] { type Out = O }
 
   implicit def lowLevelAppender[L1 <: HList, L2 <: HList, O <: HList]
-    (implicit p: PhantomAppender.Aux[L1, L2, O]): FastAppender[L1, L2] { type Out = O } =
-      new FastAppender[L1, L2] {
+    (implicit p: PhantomAppender.Aux[L1, L2, O]): Appender[L1, L2] { type Out = O } =
+      new Appender[L1, L2] {
         type Out = p.Out
         def apply(l1: L1, l2: L2): Out =
           HListN(Array.concat(l1.underlying, l2.underlying)).asInstanceOf[Out]
@@ -62,12 +62,12 @@ object PhantomAppender {
 
 trait AppendSyntax {
   object append {
-    implicit class AppendableHList[L1 <: HList](l1: L1) {
-      def ++[L2 <: HList](l2: L2)(implicit a: Appender[L1, L2]): a.Out = a(l1, l2)
+    implicit class HListAppender[L1 <: HList](l1: L1) {
+      def slow_++[L2 <: HList](l2: L2)(implicit a: HConsAppender[L1, L2]): a.Out = a(l1, l2)
     }
 
-    implicit class FastAppendableHList[L1 <: HList](l1: L1) {
-      def f_++[L2 <: HList](l2: L2)(implicit a: FastAppender[L1, L2]): a.Out = a(l1, l2)
+    implicit class FastHListAppender[L1 <: HList](l1: L1) {
+      def ++[L2 <: HList](l2: L2)(implicit a: Appender[L1, L2]): a.Out = a(l1, l2)
     }
   }
 }

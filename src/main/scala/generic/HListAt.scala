@@ -1,5 +1,7 @@
 package generic
 
+// Accessor type class to compute the N'th element of an HList L ----------------------------------
+
 trait At[L <: HList, N <: Nat] {
   type Out
   def apply(l: L): Out
@@ -12,8 +14,12 @@ object At {
     (implicit a: PhantomAt.Aux[L, N, O], i: Nat2Int[N]): At[L, N] { type Out = O } =
       new At[L, N] {
         type Out = O
-        def apply(l: L): Out =
-          l.underlying(i.value).asInstanceOf[Out]
+        def apply(l: L): Out = (l match {
+          case HList1(e1)         => e1
+          case HList2(e1, e2)     => if (i.value == 0) e1 else e2
+          case HList3(e1, e2, e3) => if (i.value == 0) e1 else if (i.value == 1) e2 else e3
+          case HListN(underlying) => underlying(i.value)
+        }).asInstanceOf[Out]
       }
 }
 
@@ -31,8 +37,8 @@ object PhantomAt {
 
 trait AtSyntax {
   object at {
-    implicit class AtHList[L <: HList](l: L) {
-      def at[N <: Nat](implicit e: At[L, N]): e.Out = e(l)
+    implicit class HListAt[L <: HList](l: L) {
+      def at[N <: Nat]()(implicit e: At[L, N]): e.Out = e(l)
       def at[N <: Nat](i: Int)(implicit n: Nat2Int.Aux[N, i.type], e: At[L, N]): e.Out = e(l)
     }
   }

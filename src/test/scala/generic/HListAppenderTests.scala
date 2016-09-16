@@ -10,10 +10,10 @@ object HListAppenderTests {
     HList3(1d, 2d, 3d)
 
   val l3: String :: Double :: Double :: Double :: HNil =
-    l1 ++ l2
+    l1 slow_++ l2
 
   val l4: String :: Double :: Double :: Double :: HNil =
-    l1 f_++ l2
+    l1 ++ l2
 
   assert(l3 == l4)
 }

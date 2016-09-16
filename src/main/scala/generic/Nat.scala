@@ -23,6 +23,8 @@ object Nat2Int {
   implicit val _4: Aux[Succ[Succ[Succ[Succ[Zero]]]], 4] = aux(4)
 }
 
+// Syntax -----------------------------------------------------------------------------------------
+
 trait NatSyntax {
   object nat {
     type _0 = Zero
@@ -31,7 +33,7 @@ trait NatSyntax {
     type _3 = Succ[Succ[Succ[Zero]]]
     type _4 = Succ[Succ[Succ[Succ[Zero]]]]
 
-    // Going from Int to Nat
+    // Going from Int to Nat (Option[N] is used as a "type proxy" here)
     def nat[N <: Nat](i: Int)(implicit e: Nat2Int.Aux[N, i.type]): Option[N] = None
 
     // Going from Nat to Int

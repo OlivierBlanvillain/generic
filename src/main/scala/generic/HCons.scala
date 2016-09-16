@@ -1,6 +1,6 @@
 package generic
 
-// Emulating the following HCons algebraic structure by case analysis: ----------------------------
+// Emulating HCons algebraic structure by case analysis -------------------------------------------
 // final case class HCons[H, T <: HList](head: H, tail: T) extends (H :: T)
 
 object HCons {
@@ -17,17 +17,21 @@ object HCons {
         HListN[H, T](result)
     }
 
-  def unapply[H, T <: HList](l: H :: T): Option[(H, T)] = {
-    val u: Array[Any] = l.underlying
-    val head: H = u.head.asInstanceOf[H]
-    val tail: T =
-      (u.size match {
-        case 1 => HNil
-        case 2 => HList1(u(1))
-        case 3 => HList2(u(1), u(2))
-        case 4 => HList3(u(1), u(2), u(3))
-        case _ => HListN(u.tail)
-      }).asInstanceOf[T]
-    Some((head, tail))
-  }
+  def unapply[H, T <: HList](l: H :: T): Option[(H, T)] =
+    ((l.asInstanceOf[Any :: HList]) match { // Workaround for #1515
+      case HList1(e1)         => Some((e1, HNil))
+      case HList2(e1, e2)     => Some((e1, HList1(e2)))
+      case HList3(e1, e2, e3) => Some((e1, HList2(e2, e3)))
+      case HListN(underlying) =>
+        val head: Any = underlying.head
+        val tail: Any =
+          (underlying.size match {
+            case 1 => HNil
+            case 2 => HList1(underlying(1))
+            case 3 => HList2(underlying(1), underlying(2))
+            case 4 => HList3(underlying(1), underlying(2), underlying(3))
+            case _ => HListN(underlying.tail)
+          })
+        Some((head, tail))
+    }).asInstanceOf[Option[(H, T)]]
 }
