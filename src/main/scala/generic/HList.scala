@@ -40,4 +40,11 @@ final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal 
       case l: HListN[_, _] => l.underlying.sameElements(underlying)
       case _ => false
     }
+
+  override def hashCode: Int = {
+    var r = 1
+    for (e <- underlying)
+      r = 31 * r + e.##
+    r
+  }
 }
