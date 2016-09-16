@@ -22,8 +22,8 @@ object PhantomGet {
 
 // Syntax -----------------------------------------------------------------------------------------
 
-trait GetSyntax {
-  object get {
+trait HMapSyntax {
+  object hmap {
     implicit class hmapGet[M <: HList](m: M) {
       def get[K, V, I <: Nat](k: K)
         (implicit
@@ -31,11 +31,7 @@ trait GetSyntax {
           a: At.Aux[M, I, HEntry[k.type, V]]
         ): V = a(m).value
     }
-  }
-}
 
-trait EntrySyntax {
-  object entry {
     implicit class EntryAssoc[K](k: K) {
       def -- [V](value: V): HEntry[K, V] = HEntry(value)
     }

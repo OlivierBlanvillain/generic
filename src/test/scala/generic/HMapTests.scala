@@ -19,14 +19,13 @@ object HMapTests {
   implicitly[PhantomGet["name", MapType]]
   implicitly[PhantomGet["genre", MapType]]
 
-  import syntax.get._
+  import syntax.hmap._
 
   assert(map.get("name") == "foo")
   assert(map.get("genre") == true)
   assert(map.get("moneyz") == 123)
   assert(map.get("cat") == "bar")
 
-  import syntax.entry._
   // (
   //   "name"   -- "foo",
   //   "genre"  -- true,
