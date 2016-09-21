@@ -32,7 +32,7 @@ final case class HList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends (T1 :: T2 ::
 
 // Array based HLists for large sizes -------------------------------------------------------------
 
-final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal with (H :: T) {
+final case class HListN[H, T <: HList](underlying: Array[Any]) extends AnyVal with (H :: T) {
   override def toString() = underlying.mkString("(", ", ", ")")
 
   override def equals(o: Any): Boolean =
@@ -47,4 +47,8 @@ final case class HListN[+H, +T <: HList](underlying: Array[Any]) extends AnyVal 
       r = 31 * r + e.##
     r
   }
+}
+
+object HListUnapply {
+  def unapplySeq[L <: HList](l: L): Option[Seq[Any]] = Some(l.underlying)
 }
