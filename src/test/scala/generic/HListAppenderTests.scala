@@ -10,7 +10,7 @@ object HListAppenderTests {
     HList3(1d, 2d, 3d)
 
   val l3: String :: Double :: Double :: Double :: HNil =
-    l1 slow_++ l2
+    HListN[String, Double :: Double :: Double :: HNil](Array("s", 1d, 2d, 3d))
 
   val l4: String :: Double :: Double :: Double :: HNil =
     l1 ++ l2
