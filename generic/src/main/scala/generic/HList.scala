@@ -3,7 +3,7 @@ package generic
 // HList types ------------------------------------------------------------------------------------
 
 sealed trait HList { def underlying: Array[Any] }
-sealed trait ::[H, T <: HList] extends HList // Should be [+H, +T <: HList], see #1500
+/*sealed*/ trait ::[H, T <: HList] extends HList // Should be [+H, +T <: HList], see #1500
 sealed trait HNil extends HList
 
 // HList values -----------------------------------------------------------------------------------
