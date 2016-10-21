@@ -32,7 +32,7 @@ object Gen {
     def accessUnrolledHList(n: Int) = s"""unrolledHList$arity${1.to((n - 1) / unroll).map(_ => ".tail").mkString}.head${(n - 1) % unroll + 1}"""
 
     def measure(what: String, how: String) =
-      s"""measure method "#$arity $what" in { using(Gen.unit("test")) in { _ => $how }}"""
+      s"""measure method "$what #${"%02d".format(arity)}" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => $how }}"""
   }
 
   trait Template {
@@ -57,10 +57,11 @@ object Gen {
         |package bench
         |
         |import org.scalameter.api.Gen
+        |import org.scalameter.Key.exec.benchRuns
         |
-        |object CreationBench extends MyBench {
-        |  performance of "HList creation" in {
-        -    ${measure("Tuple", mkTuple)}
+        |case object CreationBench extends MyBench {
+        |  performance of toString in {
+        -    ${measure("scalaTuple", mkTuple)}
         -    ${measure("ArrayHList", mkArrayHList)}
         -    ${measure("LinkedHList", mkLinkedHList)}
         -    ${measure("UnrolledHList", mkUnrolledHList)}
@@ -80,11 +81,12 @@ object Gen {
         |package bench
         |
         |import org.scalameter.api.Gen
+        |import org.scalameter.Key.exec.benchRuns
         |
-        |object AccessLastBench extends MyBench {
-        |  performance of "HList last el" in {
+        |case object AccessLastBench extends MyBench {
+        |  performance of toString in {
         -    val tuple$arity = $mkTuple
-        -    ${measure("Tuple", accessTuple(arity))}
+        -    ${measure("scalaTuple", accessTuple(arity))}
         -
         -    val arrayHList$arity = $mkArrayHList
         -    ${measure("ArrayHList", accessArrayHList(arity))}
@@ -110,11 +112,12 @@ object Gen {
         |package bench
         |
         |import org.scalameter.api.Gen
+        |import org.scalameter.Key.exec.benchRuns
         |
-        |object AccessAllBench extends MyBench {
-        |  performance of "HList last el" in {
+        |case object AccessAllBench extends MyBench {
+        |  performance of toString in {
         -    val tuple$arity = $mkTuple
-        -    ${measure("Tuple", (1 to arity).map(accessTuple).mkString(" + "))}
+        -    ${measure("scalaTuple", (1 to arity).map(accessTuple).mkString(" + "))}
         -
         -    val arrayHList$arity = $mkArrayHList
         -    ${measure("ArrayHList", (1 to arity).map(accessArrayHList).map(s => s"$s.asInstanceOf[Int]").mkString(" + "))}
@@ -156,11 +159,12 @@ object Gen {
         |package bench
         |
         |import org.scalameter.api.Gen
+        |import org.scalameter.Key.exec.benchRuns
         |
-        |object TailBench extends MyBench {
-        |  performance of "HList last el" in {
+        |case object TailBench extends MyBench {
+        |  performance of toString in {
         -    val tuple$arity = $mkTuple
-        -    ${measure("Tuple",
+        -    ${measure("scalaTuple",
                if (arity == 1) "()" else s"scala.Tuple${arity - 1}(${2.to(arity).map(accessTuple).mkString(", ")})"
              )}
         -
