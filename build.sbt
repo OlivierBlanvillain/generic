@@ -15,7 +15,7 @@ lazy val generic = project.settings(
   scalaCompilerBridgeSource := ("ch.epfl.lamp" % "dotty-bridge" % "0.1.1-SNAPSHOT" % "component").sources()
 )
 
-lazy val bench = project.settings(
+lazy val `scalameter-bench` = project.settings(
   scalaVersion := "2.11.1",
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint"),
   libraryDependencies += "com.storm-enroute" %% "scalameter" % "0.8.1" % "test",
@@ -24,4 +24,15 @@ lazy val bench = project.settings(
   logBuffered := false
 )
 
-lazy val gen = project.settings(scalaVersion := "2.11.1")
+lazy val `jmh-bench` = project
+  .enablePlugins(JmhPlugin)
+  .settings(
+    scalaVersion := "2.11.1",
+    scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint"),
+    libraryDependencies += "com.storm-enroute" %% "scalameter" % "0.8.1" % "test",
+    testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
+    parallelExecution in Test := false,
+    logBuffered := false
+  )
+
+lazy val `code-gen` = project.settings(scalaVersion := "2.11.1")
