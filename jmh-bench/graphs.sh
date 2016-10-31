@@ -30,19 +30,19 @@ for plot in       \
     arity=1
     thrpt=4
     ci=6
-
+    title=$(echo $plot | rev | cut -c6- | rev)
     gnuplot <<- EOF
       set xrange [1:22]
       set xlabel "Size"
-      set ylabel "Duration (seconds)"
-      set title "$plot"
+      set ylabel "Throughput (million op/sec)"
+      set title "$title"
       set terminal pdf
       set output "jmh-bench/pdf/$plot.pdf"
       plot \
-        "jmh-bench/out/$plot.ArrayHList.run"    using $arity:$thrpt title "ArrayHList"    with lines, \
-        "jmh-bench/out/$plot.LinkedHList.run"   using $arity:$thrpt title "LinkedHList"   with lines, \
-        "jmh-bench/out/$plot.ScalaTuple.run"    using $arity:$thrpt title "ScalaTuple"    with lines, \
-        "jmh-bench/out/$plot.UnrolledHList.run" using $arity:$thrpt title "UnrolledHList" with lines
+        "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt/1000000) title "ArrayHList"    with lines, \
+        "jmh-bench/out/$plot.LinkedHList.run"   using $arity:(\$$thrpt/1000000) title "LinkedHList"   with lines, \
+        "jmh-bench/out/$plot.ScalaTuple.run"    using $arity:(\$$thrpt/1000000) title "ScalaTuple"    with lines, \
+        "jmh-bench/out/$plot.UnrolledHList.run" using $arity:(\$$thrpt/1000000) title "UnrolledHList" with lines
 EOF
 # "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt-\$$ci):(\$$thrpt+\$$ci) title "ArrayHList"    with filledcurves, \
 done

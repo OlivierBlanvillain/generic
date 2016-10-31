@@ -4,7 +4,7 @@ import org.scalameter.api.Gen
 import org.scalameter.Key.exec.benchRuns
 
 case object BenchScan extends MyBench {
-  performance of Gen$GenSMBenchScan$@47664e40 in {
+  performance of GenSMBenchScan in {
     val tuple1 = Tuple1(1)
     measure method "scalaTuple #01" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple1._1 }}
 

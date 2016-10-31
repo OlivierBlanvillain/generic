@@ -50,7 +50,7 @@ object Gen {
 
   // Scalameter ---------------------------------------------------------------
 
-  object GenSMBenchCreation extends Template {
+  case object GenSMBenchCreation extends Template {
     val path = "scalameter-bench/src/test/scala/BenchCreation.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -74,7 +74,7 @@ object Gen {
     }
   }
 
-  object GenSMBenchAccessLast extends Template {
+  case object GenSMBenchAccessLast extends Template {
     val path = "scalameter-bench/src/test/scala/BenchAccessLast.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -105,7 +105,7 @@ object Gen {
     }
   }
 
-  object GenSMBenchScan extends Template {
+  case object GenSMBenchScan extends Template {
     val path = "scalameter-bench/src/test/scala/BenchScan.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -152,7 +152,7 @@ object Gen {
     }
   }
 
-  object GenSMBenchTail extends Template {
+  case object GenSMBenchTail extends Template {
     val path = "scalameter-bench/src/test/scala/BenchTail.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -194,7 +194,7 @@ object Gen {
 
   // JMH ----------------------------------------------------------------------
 
-  object GenJMHDataDef extends Template {
+  case object GenJMHDataDef extends Template {
     val path = "jmh-bench/src/main/scala/DataDef.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -215,7 +215,7 @@ object Gen {
     }
   }
 
-  object GenJMHCreationBench extends Template {
+  case object GenJMHCreationBench extends Template {
     val path = "jmh-bench/src/main/scala/CreationBench.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -226,16 +226,16 @@ object Gen {
         |import org.openjdk.jmh.annotations._
         |
         |class CreationBench {
-        -    @Benchmark def createScalaTuple$arity    = $mkTuple
-        -    @Benchmark def createArrayHList$arity    = $mkArrayHList
-        -    @Benchmark def createLinkedHList$arity   = $mkLinkedHList
-        -    @Benchmark def createUnrolledHList$arity = $mkUnrolledHList
+        -  @Benchmark def createScalaTuple$arity    = $mkTuple
+        -  @Benchmark def createArrayHList$arity    = $mkArrayHList
+        -  @Benchmark def createLinkedHList$arity   = $mkLinkedHList
+        -  @Benchmark def createUnrolledHList$arity = $mkUnrolledHList
         |}
       """
     }
   }
 
-  object GenJMHAccessLastBench extends Template {
+  case object GenJMHAccessLastBench extends Template {
     val path = "jmh-bench/src/main/scala/AccessLastBench.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -247,16 +247,16 @@ object Gen {
         |import DataDef._
         |
         |class AccessLastBench {
-        -    @Benchmark def lastScalaTuple$arity    = ${accessTuple(arity)}
-        -    @Benchmark def lastArrayHList$arity    = ${accessArrayHList(arity)}
-        -    @Benchmark def lastLinkedHList$arity   = ${accessLinkedHList(arity)}
-        -    @Benchmark def lastUnrolledHList$arity = ${accessUnrolledHList(arity)}
+        -  @Benchmark def lastScalaTuple$arity    = ${accessTuple(arity)}
+        -  @Benchmark def lastArrayHList$arity    = ${accessArrayHList(arity)}
+        -  @Benchmark def lastLinkedHList$arity   = ${accessLinkedHList(arity)}
+        -  @Benchmark def lastUnrolledHList$arity = ${accessUnrolledHList(arity)}
         |}
       """
     }
   }
 
-  object GenJMHScanBench extends Template {
+  case object GenJMHScanBench extends Template {
     val path = "jmh-bench/src/main/scala/ScanBench.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -268,37 +268,37 @@ object Gen {
         |import DataDef._
         |
         |class ScanBench {
-        -    @Benchmark def scanScalaTuple$arity = ${
-              (1 to arity).map(accessTuple).mkString(" + ")}
+        -  @Benchmark def scanScalaTuple$arity = ${
+            (1 to arity).map(accessTuple).mkString(" + ")}
 
-        -    @Benchmark def scanArrayHList$arity = ${
-              (1 to arity).map(accessArrayHList).map(s => s"$s.asInstanceOf[Int]").mkString(" + ")}
+        -  @Benchmark def scanArrayHList$arity = ${
+            (1 to arity).map(accessArrayHList).map(s => s"$s.asInstanceOf[Int]").mkString(" + ")}
 
-        -    @Benchmark def scanLinkedHList$arity = { ${
-               (if (arity > 1) s"val t1 = linkedHList$arity.tail; " else "") +
-               (2 until arity).map { i =>
-                 s"val t$i = t${i - 1}.tail; "
-               }.mkString +
-               (s"linkedHList$arity.head" +: (1 until arity).map(i => s"t$i.head")).mkString(" + ")
-             } }
+        -  @Benchmark def scanLinkedHList$arity = { ${
+             (if (arity > 1) s"val t1 = linkedHList$arity.tail; " else "") +
+             (2 until arity).map { i =>
+               s"val t$i = t${i - 1}.tail; "
+             }.mkString +
+             (s"linkedHList$arity.head" +: (1 until arity).map(i => s"t$i.head")).mkString(" + ")
+           } }
 
-        -    @Benchmark def scanUnrolledHList$arity = { ${
-               (if (arity > unroll) s"val t1 = unrolledHList$arity.tail; " else "") +
-               2.to((arity - 1) / unroll).map { i =>
-                 s"val t$i = t${i - 1}.tail; "
-               }.mkString +
-               (1 to arity).map { n =>
-                 val head = (n - 1) % unroll + 1
-                 val tail = (n - 1) / unroll
-                 (s"unrolledHList$arity" +: 1.to((arity - 1) / unroll).map(i => s"t$i")).reverse.apply(tail) + s".head$head"
-               }.mkString(" + ")
-             } }
+        -  @Benchmark def scanUnrolledHList$arity = { ${
+             (if (arity > unroll) s"val t1 = unrolledHList$arity.tail; " else "") +
+             2.to((arity - 1) / unroll).map { i =>
+               s"val t$i = t${i - 1}.tail; "
+             }.mkString +
+             (1 to arity).map { n =>
+               val head = (n - 1) % unroll + 1
+               val tail = (n - 1) / unroll
+               (s"unrolledHList$arity" +: 1.to((arity - 1) / unroll).map(i => s"t$i")).reverse.apply(tail) + s".head$head"
+             }.mkString(" + ")
+           } }
         |}
       """
     }
   }
 
-  object GenJMHTailBench extends Template {
+  case object GenJMHTailBench extends Template {
     val path = "jmh-bench/src/main/scala/TailBench.scala"
     def content(tv: TemplateVals) = {
       import tv._
@@ -310,15 +310,15 @@ object Gen {
         |import DataDef._
         |
         |class TailBench {
-        -    @Benchmark def tailScalaTuple$arity = ${
+        -  @Benchmark def tailScalaTuple$arity = ${
              if (arity == 1) "Nil" else s"Tuple${arity - 1}(${2.to(arity).map(accessTuple).mkString(", ")})" }
 
-        -    @Benchmark def tailArrayHList$arity = ${
+        -  @Benchmark def tailArrayHList$arity = ${
              if (arity == 1) "ArrayHNil" else s"Tuple${arity - 1}(${2.to(arity).map(accessArrayHList).mkString(", ")})" }
 
-        -    @Benchmark def tailLinkedHList$arity = linkedHList$arity.tail
+        -  @Benchmark def tailLinkedHList$arity = linkedHList$arity.tail
 
-        -    @Benchmark def tailUnrolledHList$arity = ${(arity % 4) match {
+        -  @Benchmark def tailUnrolledHList$arity = ${(arity % 4) match {
              case 1 => s"unrolledHList$arity.tail"
              case 2 => s"UnrolledHList1(unrolledHList$arity.head2, unrolledHList$arity.tail)"
              case 3 => s"UnrolledHList2(unrolledHList$arity.head2, unrolledHList$arity.head3, unrolledHList$arity.tail)"
