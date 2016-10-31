@@ -3,9 +3,9 @@ package bench
 import org.scalameter.api.Gen
 import org.scalameter.Key.exec.benchRuns
 
-case object AccessAllBench extends MyBench {
-  performance of toString in {
-    val tuple1 = scala.Tuple1(1)
+case object ScanBench extends MyBench {
+  performance of Gen$GenSmScanBench$@19222e0e in {
+    val tuple1 = Tuple1(1)
     measure method "scalaTuple #01" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple1._1 }}
 
     val arrayHList1 = ArrayHListN(Array(1))
@@ -17,7 +17,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList1 = UnrolledHList1(1, UnrolledHNil)
     measure method "UnrolledHList #01" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => unrolledHList1.head1 }}
 
-    val tuple2 = scala.Tuple2(1, 2)
+    val tuple2 = Tuple2(1, 2)
     measure method "scalaTuple #02" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple2._1 + tuple2._2 }}
 
     val arrayHList2 = ArrayHListN(Array(1, 2))
@@ -29,7 +29,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList2 = UnrolledHList2(1, 2, UnrolledHNil)
     measure method "UnrolledHList #02" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => unrolledHList2.head1 + unrolledHList2.head2 }}
 
-    val tuple3 = scala.Tuple3(1, 2, 3)
+    val tuple3 = Tuple3(1, 2, 3)
     measure method "scalaTuple #03" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple3._1 + tuple3._2 + tuple3._3 }}
 
     val arrayHList3 = ArrayHListN(Array(1, 2, 3))
@@ -41,7 +41,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList3 = UnrolledHList3(1, 2, 3, UnrolledHNil)
     measure method "UnrolledHList #03" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => unrolledHList3.head1 + unrolledHList3.head2 + unrolledHList3.head3 }}
 
-    val tuple4 = scala.Tuple4(1, 2, 3, 4)
+    val tuple4 = Tuple4(1, 2, 3, 4)
     measure method "scalaTuple #04" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple4._1 + tuple4._2 + tuple4._3 + tuple4._4 }}
 
     val arrayHList4 = ArrayHListN(Array(1, 2, 3, 4))
@@ -53,7 +53,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList4 = UnrolledHList4(1, 2, 3, 4, UnrolledHNil)
     measure method "UnrolledHList #04" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => unrolledHList4.head1 + unrolledHList4.head2 + unrolledHList4.head3 + unrolledHList4.head4 }}
 
-    val tuple5 = scala.Tuple5(1, 2, 3, 4, 5)
+    val tuple5 = Tuple5(1, 2, 3, 4, 5)
     measure method "scalaTuple #05" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple5._1 + tuple5._2 + tuple5._3 + tuple5._4 + tuple5._5 }}
 
     val arrayHList5 = ArrayHListN(Array(1, 2, 3, 4, 5))
@@ -65,7 +65,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList5 = UnrolledHList1(5, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))
     measure method "UnrolledHList #05" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList5.tail; t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList5.head1 }}
 
-    val tuple6 = scala.Tuple6(1, 2, 3, 4, 5, 6)
+    val tuple6 = Tuple6(1, 2, 3, 4, 5, 6)
     measure method "scalaTuple #06" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple6._1 + tuple6._2 + tuple6._3 + tuple6._4 + tuple6._5 + tuple6._6 }}
 
     val arrayHList6 = ArrayHListN(Array(1, 2, 3, 4, 5, 6))
@@ -77,7 +77,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList6 = UnrolledHList2(5, 6, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))
     measure method "UnrolledHList #06" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList6.tail; t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList6.head1 + unrolledHList6.head2 }}
 
-    val tuple7 = scala.Tuple7(1, 2, 3, 4, 5, 6, 7)
+    val tuple7 = Tuple7(1, 2, 3, 4, 5, 6, 7)
     measure method "scalaTuple #07" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple7._1 + tuple7._2 + tuple7._3 + tuple7._4 + tuple7._5 + tuple7._6 + tuple7._7 }}
 
     val arrayHList7 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7))
@@ -89,7 +89,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList7 = UnrolledHList3(5, 6, 7, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))
     measure method "UnrolledHList #07" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList7.tail; t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList7.head1 + unrolledHList7.head2 + unrolledHList7.head3 }}
 
-    val tuple8 = scala.Tuple8(1, 2, 3, 4, 5, 6, 7, 8)
+    val tuple8 = Tuple8(1, 2, 3, 4, 5, 6, 7, 8)
     measure method "scalaTuple #08" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple8._1 + tuple8._2 + tuple8._3 + tuple8._4 + tuple8._5 + tuple8._6 + tuple8._7 + tuple8._8 }}
 
     val arrayHList8 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8))
@@ -101,7 +101,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList8 = UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))
     measure method "UnrolledHList #08" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList8.tail; t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList8.head1 + unrolledHList8.head2 + unrolledHList8.head3 + unrolledHList8.head4 }}
 
-    val tuple9 = scala.Tuple9(1, 2, 3, 4, 5, 6, 7, 8, 9)
+    val tuple9 = Tuple9(1, 2, 3, 4, 5, 6, 7, 8, 9)
     measure method "scalaTuple #09" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple9._1 + tuple9._2 + tuple9._3 + tuple9._4 + tuple9._5 + tuple9._6 + tuple9._7 + tuple9._8 + tuple9._9 }}
 
     val arrayHList9 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9))
@@ -113,7 +113,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList9 = UnrolledHList1(9, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))
     measure method "UnrolledHList #09" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList9.tail; val t2 = t1.tail; t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList9.head1 }}
 
-    val tuple10 = scala.Tuple10(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    val tuple10 = Tuple10(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     measure method "scalaTuple #10" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple10._1 + tuple10._2 + tuple10._3 + tuple10._4 + tuple10._5 + tuple10._6 + tuple10._7 + tuple10._8 + tuple10._9 + tuple10._10 }}
 
     val arrayHList10 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
@@ -125,7 +125,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList10 = UnrolledHList2(9, 10, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))
     measure method "UnrolledHList #10" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList10.tail; val t2 = t1.tail; t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList10.head1 + unrolledHList10.head2 }}
 
-    val tuple11 = scala.Tuple11(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+    val tuple11 = Tuple11(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
     measure method "scalaTuple #11" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple11._1 + tuple11._2 + tuple11._3 + tuple11._4 + tuple11._5 + tuple11._6 + tuple11._7 + tuple11._8 + tuple11._9 + tuple11._10 + tuple11._11 }}
 
     val arrayHList11 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
@@ -137,7 +137,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList11 = UnrolledHList3(9, 10, 11, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))
     measure method "UnrolledHList #11" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList11.tail; val t2 = t1.tail; t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList11.head1 + unrolledHList11.head2 + unrolledHList11.head3 }}
 
-    val tuple12 = scala.Tuple12(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+    val tuple12 = Tuple12(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     measure method "scalaTuple #12" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple12._1 + tuple12._2 + tuple12._3 + tuple12._4 + tuple12._5 + tuple12._6 + tuple12._7 + tuple12._8 + tuple12._9 + tuple12._10 + tuple12._11 + tuple12._12 }}
 
     val arrayHList12 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12))
@@ -149,7 +149,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList12 = UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))
     measure method "UnrolledHList #12" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList12.tail; val t2 = t1.tail; t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList12.head1 + unrolledHList12.head2 + unrolledHList12.head3 + unrolledHList12.head4 }}
 
-    val tuple13 = scala.Tuple13(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
+    val tuple13 = Tuple13(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
     measure method "scalaTuple #13" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple13._1 + tuple13._2 + tuple13._3 + tuple13._4 + tuple13._5 + tuple13._6 + tuple13._7 + tuple13._8 + tuple13._9 + tuple13._10 + tuple13._11 + tuple13._12 + tuple13._13 }}
 
     val arrayHList13 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13))
@@ -161,7 +161,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList13 = UnrolledHList1(13, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))))
     measure method "UnrolledHList #13" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList13.tail; val t2 = t1.tail; val t3 = t2.tail; t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList13.head1 }}
 
-    val tuple14 = scala.Tuple14(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
+    val tuple14 = Tuple14(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
     measure method "scalaTuple #14" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple14._1 + tuple14._2 + tuple14._3 + tuple14._4 + tuple14._5 + tuple14._6 + tuple14._7 + tuple14._8 + tuple14._9 + tuple14._10 + tuple14._11 + tuple14._12 + tuple14._13 + tuple14._14 }}
 
     val arrayHList14 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
@@ -173,7 +173,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList14 = UnrolledHList2(13, 14, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))))
     measure method "UnrolledHList #14" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList14.tail; val t2 = t1.tail; val t3 = t2.tail; t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList14.head1 + unrolledHList14.head2 }}
 
-    val tuple15 = scala.Tuple15(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+    val tuple15 = Tuple15(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
     measure method "scalaTuple #15" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple15._1 + tuple15._2 + tuple15._3 + tuple15._4 + tuple15._5 + tuple15._6 + tuple15._7 + tuple15._8 + tuple15._9 + tuple15._10 + tuple15._11 + tuple15._12 + tuple15._13 + tuple15._14 + tuple15._15 }}
 
     val arrayHList15 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15))
@@ -185,7 +185,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList15 = UnrolledHList3(13, 14, 15, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))))
     measure method "UnrolledHList #15" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList15.tail; val t2 = t1.tail; val t3 = t2.tail; t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList15.head1 + unrolledHList15.head2 + unrolledHList15.head3 }}
 
-    val tuple16 = scala.Tuple16(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
+    val tuple16 = Tuple16(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
     measure method "scalaTuple #16" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple16._1 + tuple16._2 + tuple16._3 + tuple16._4 + tuple16._5 + tuple16._6 + tuple16._7 + tuple16._8 + tuple16._9 + tuple16._10 + tuple16._11 + tuple16._12 + tuple16._13 + tuple16._14 + tuple16._15 + tuple16._16 }}
 
     val arrayHList16 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16))
@@ -197,7 +197,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList16 = UnrolledHList4(13, 14, 15, 16, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))))
     measure method "UnrolledHList #16" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList16.tail; val t2 = t1.tail; val t3 = t2.tail; t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList16.head1 + unrolledHList16.head2 + unrolledHList16.head3 + unrolledHList16.head4 }}
 
-    val tuple17 = scala.Tuple17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17)
+    val tuple17 = Tuple17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17)
     measure method "scalaTuple #17" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple17._1 + tuple17._2 + tuple17._3 + tuple17._4 + tuple17._5 + tuple17._6 + tuple17._7 + tuple17._8 + tuple17._9 + tuple17._10 + tuple17._11 + tuple17._12 + tuple17._13 + tuple17._14 + tuple17._15 + tuple17._16 + tuple17._17 }}
 
     val arrayHList17 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17))
@@ -209,7 +209,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList17 = UnrolledHList1(17, UnrolledHList4(13, 14, 15, 16, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))))
     measure method "UnrolledHList #17" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList17.tail; val t2 = t1.tail; val t3 = t2.tail; val t4 = t3.tail; t4.head1 + t4.head2 + t4.head3 + t4.head4 + t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList17.head1 }}
 
-    val tuple18 = scala.Tuple18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18)
+    val tuple18 = Tuple18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18)
     measure method "scalaTuple #18" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple18._1 + tuple18._2 + tuple18._3 + tuple18._4 + tuple18._5 + tuple18._6 + tuple18._7 + tuple18._8 + tuple18._9 + tuple18._10 + tuple18._11 + tuple18._12 + tuple18._13 + tuple18._14 + tuple18._15 + tuple18._16 + tuple18._17 + tuple18._18 }}
 
     val arrayHList18 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18))
@@ -221,7 +221,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList18 = UnrolledHList2(17, 18, UnrolledHList4(13, 14, 15, 16, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))))
     measure method "UnrolledHList #18" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList18.tail; val t2 = t1.tail; val t3 = t2.tail; val t4 = t3.tail; t4.head1 + t4.head2 + t4.head3 + t4.head4 + t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList18.head1 + unrolledHList18.head2 }}
 
-    val tuple19 = scala.Tuple19(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+    val tuple19 = Tuple19(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
     measure method "scalaTuple #19" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple19._1 + tuple19._2 + tuple19._3 + tuple19._4 + tuple19._5 + tuple19._6 + tuple19._7 + tuple19._8 + tuple19._9 + tuple19._10 + tuple19._11 + tuple19._12 + tuple19._13 + tuple19._14 + tuple19._15 + tuple19._16 + tuple19._17 + tuple19._18 + tuple19._19 }}
 
     val arrayHList19 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19))
@@ -233,7 +233,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList19 = UnrolledHList3(17, 18, 19, UnrolledHList4(13, 14, 15, 16, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))))
     measure method "UnrolledHList #19" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList19.tail; val t2 = t1.tail; val t3 = t2.tail; val t4 = t3.tail; t4.head1 + t4.head2 + t4.head3 + t4.head4 + t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList19.head1 + unrolledHList19.head2 + unrolledHList19.head3 }}
 
-    val tuple20 = scala.Tuple20(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+    val tuple20 = Tuple20(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
     measure method "scalaTuple #20" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple20._1 + tuple20._2 + tuple20._3 + tuple20._4 + tuple20._5 + tuple20._6 + tuple20._7 + tuple20._8 + tuple20._9 + tuple20._10 + tuple20._11 + tuple20._12 + tuple20._13 + tuple20._14 + tuple20._15 + tuple20._16 + tuple20._17 + tuple20._18 + tuple20._19 + tuple20._20 }}
 
     val arrayHList20 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20))
@@ -245,7 +245,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList20 = UnrolledHList4(17, 18, 19, 20, UnrolledHList4(13, 14, 15, 16, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil)))))
     measure method "UnrolledHList #20" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList20.tail; val t2 = t1.tail; val t3 = t2.tail; val t4 = t3.tail; t4.head1 + t4.head2 + t4.head3 + t4.head4 + t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList20.head1 + unrolledHList20.head2 + unrolledHList20.head3 + unrolledHList20.head4 }}
 
-    val tuple21 = scala.Tuple21(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21)
+    val tuple21 = Tuple21(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21)
     measure method "scalaTuple #21" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple21._1 + tuple21._2 + tuple21._3 + tuple21._4 + tuple21._5 + tuple21._6 + tuple21._7 + tuple21._8 + tuple21._9 + tuple21._10 + tuple21._11 + tuple21._12 + tuple21._13 + tuple21._14 + tuple21._15 + tuple21._16 + tuple21._17 + tuple21._18 + tuple21._19 + tuple21._20 + tuple21._21 }}
 
     val arrayHList21 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21))
@@ -257,7 +257,7 @@ case object AccessAllBench extends MyBench {
     val unrolledHList21 = UnrolledHList1(21, UnrolledHList4(17, 18, 19, 20, UnrolledHList4(13, 14, 15, 16, UnrolledHList4(9, 10, 11, 12, UnrolledHList4(5, 6, 7, 8, UnrolledHList4(1, 2, 3, 4, UnrolledHNil))))))
     measure method "UnrolledHList #21" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => val t1 = unrolledHList21.tail; val t2 = t1.tail; val t3 = t2.tail; val t4 = t3.tail; val t5 = t4.tail; t5.head1 + t5.head2 + t5.head3 + t5.head4 + t4.head1 + t4.head2 + t4.head3 + t4.head4 + t3.head1 + t3.head2 + t3.head3 + t3.head4 + t2.head1 + t2.head2 + t2.head3 + t2.head4 + t1.head1 + t1.head2 + t1.head3 + t1.head4 + unrolledHList21.head1 }}
 
-    val tuple22 = scala.Tuple22(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22)
+    val tuple22 = Tuple22(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22)
     measure method "scalaTuple #22" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => tuple22._1 + tuple22._2 + tuple22._3 + tuple22._4 + tuple22._5 + tuple22._6 + tuple22._7 + tuple22._8 + tuple22._9 + tuple22._10 + tuple22._11 + tuple22._12 + tuple22._13 + tuple22._14 + tuple22._15 + tuple22._16 + tuple22._17 + tuple22._18 + tuple22._19 + tuple22._20 + tuple22._21 + tuple22._22 }}
 
     val arrayHList22 = ArrayHListN(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22))

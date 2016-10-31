@@ -3,8 +3,8 @@ package bench
 import org.scalameter.api.Gen
 import org.scalameter.Key.exec.benchRuns
 
-case object CreationBench extends MyBench {
-  performance of Gen$GenSmCreationBench$@61dbe93f in {
+case object BenchCreation extends MyBench {
+  performance of Gen$GenSMBenchCreation$@3f35a024 in {
     measure method "scalaTuple #01" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => Tuple1(1) }}
     measure method "ArrayHList #01" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => ArrayHListN(Array(1)) }}
     measure method "LinkedHList #01" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => LinkedHCons(1, LinkedHNil) }}

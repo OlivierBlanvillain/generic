@@ -3,8 +3,8 @@ package bench
 import org.scalameter.api.Gen
 import org.scalameter.Key.exec.benchRuns
 
-case object TailBench extends MyBench {
-  performance of Gen$GenSmTailBench$@3980dae7 in {
+case object BenchTail extends MyBench {
+  performance of Gen$GenSMBenchTail$@130b0ced in {
     val tuple1 = Tuple1(1)
     measure method "scalaTuple #01" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => () }}
 
