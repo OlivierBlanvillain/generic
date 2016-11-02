@@ -32,19 +32,33 @@ for plot in       \
     ci=6
     title=$(echo $plot | rev | cut -c6- | rev)
     gnuplot <<- EOF
-      set xrange [1:22]
-      set xlabel "Size"
-      set ylabel "Throughput (million op/sec)"
+      set terminal pdf lw 3 dashed
       set title "$title"
-      set terminal pdf
       set output "jmh-bench/pdf/$plot.pdf"
+
+      set xrange [1:22]
+      set xlabel "Tuple Size"
+      set ylabel "Throughput (Mops/sec)"
+
+      set style line 1 lc rgb '#A6CEE3' # light blue
+      set style line 2 lc rgb '#1F78B4' # dark blue
+      set style line 3 lc rgb '#B2DF8A' # light green
+      set style line 4 lc rgb '#33A02C' # dark green
+      set style line 5 lc rgb '#FB9A99' # light red
+      set style line 6 lc rgb '#E31A1C' # dark red
+      set style line 7 lc rgb '#FDBF6F' # light orange
+      set style line 8 lc rgb '#FF7F00' # dark orange
+
       plot \
-        "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt/1000000) title "ArrayHList"    with lines, \
-        "jmh-bench/out/$plot.LinkedHList.run"   using $arity:(\$$thrpt/1000000) title "LinkedHList"   with lines, \
-        "jmh-bench/out/$plot.ScalaTuple.run"    using $arity:(\$$thrpt/1000000) title "ScalaTuple"    with lines, \
-        "jmh-bench/out/$plot.UnrolledHList.run" using $arity:(\$$thrpt/1000000) title "UnrolledHList" with lines
+        "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 1, \
+        "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt/1000000) title "ArrayHList"                                with lines ls 2, \
+        "jmh-bench/out/$plot.LinkedHList.run"   using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 3, \
+        "jmh-bench/out/$plot.LinkedHList.run"   using $arity:(\$$thrpt/1000000) title "LinkedHList"                               with lines ls 4, \
+        "jmh-bench/out/$plot.ScalaTuple.run"    using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 5, \
+        "jmh-bench/out/$plot.ScalaTuple.run"    using $arity:(\$$thrpt/1000000) title "ScalaTuple"                                with lines ls 6, \
+        "jmh-bench/out/$plot.UnrolledHList.run" using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 7, \
+        "jmh-bench/out/$plot.UnrolledHList.run" using $arity:(\$$thrpt/1000000) title "UnrolledHList"                             with lines ls 8
 EOF
-# "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt-\$$ci):(\$$thrpt+\$$ci) title "ArrayHList"    with filledcurves, \
 done
 
 pdfjam jmh-bench/pdf/*.pdf --nup 2x2 --landscape --outfile jmh-bench/pdf/merged.pdf

@@ -18,7 +18,7 @@ object Playground {
   //     case HCons(h, t) => Succ(size(t))
   //   }
 
-  def size[L <: HList, N <: Nat](l: L)(implicit s: Size[L] { type Out = N }): N = s(l)
+  def size[L <: HList](l: L)(implicit s: Size[L]): s.Out = s(l)
 
   def main(s: Array[String]): Unit = {
     val s = size(HCons(1, HCons(3, HNil)))
@@ -28,17 +28,17 @@ object Playground {
 
 
 trait Size[L <: HList] {
-  type Out <: Nat
+  type Out
   def apply(l: L): Out
 }
 
 object Size {
-  type Aux[L <: HList, N <: Nat] = Size[L] { type Out = N }
-  def  Aux[L <: HList, N <: Nat](f: L => N): Aux[L, N] = new Size[L] { type Out = N; def apply(l: L): N = f(l) }
+  type Aux[L <: HList, N] = Size[L] { type Out = N }
+  def  aux[L <: HList, N](f: L => N): Aux[L, N] = new Size[L] { type Out = N; def apply(l: L): N = f(l) }
 
-  implicit val hnilSize: Aux[HNil.type, Zero.type] = Aux(_ => Zero)
+  implicit val hnilSize: Aux[HNil.type, Zero.type] = aux(_ => Zero)
 
   implicit def hconsSize[H, T <: HList, P <: Nat]
     (implicit i: Aux[T, P]): Aux[HCons[H, T], Succ[P]] =
-      Aux(l => Succ(i(l.tail)))
+      aux(l => Succ(i(l.tail)))
 }
