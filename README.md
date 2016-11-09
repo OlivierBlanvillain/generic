@@ -1,6 +1,6 @@
 # Generic
 
-Rewriting rules for Tuple types
+Tuple types
 
 ```scala
 ()               → HNil
@@ -11,7 +11,7 @@ Rewriting rules for Tuple types
 ...
 ```
 
-Rewriting rules for Tuple creation
+Tuple creation
 
 ```scala
 ()               → HNil
@@ -22,7 +22,7 @@ Rewriting rules for Tuple creation
 ...
 ```
 
-Rewriting rules for Tuple pattern matching
+Tuple pattern matching
 
 ```scala
 case ()               → case HNil =>
@@ -38,3 +38,72 @@ case (e1, e2, e3, e4) →
     val e4 = l.underlying(3).asInstanceOf[T4]
 ...
 ```
+
+Assuming Function4 is the new 22
+
+```
+Function0[A]             → Function0[A]          & GenFun[HNil, C]
+
+Function1[A, B]          → Function1[A, B]       & GenFun[A :: HNil, C]
+Function2[A, B, C]       → Function2[A, B, C]    & GenFun[A :: B :: HNil, C]
+Function3[A, B, C, D]    → Function3[A, B, C, D] & GenFun[A :: B :: C :: HNil, D]
+Function4[A, B, C, D, E] → GenFun[A :: B :: C :: D :: HNil, E]
+```
+
+```
+Function0[A]             → Function0[A]          & GenFun[HNil, C]
+
+Function1[A, B]          → Function1[A, B]       & GenFun[A :: HNil, C]
+Function1[Tuple1[A], B]  → Function1[A, B]       & GenFun[A :: HNil, C]
+
+Function1[(A, B), C]     → Function2[A, B, C]    & GenFun[A :: B :: HNil, C]
+Function2[A, B, C]       → Function2[A, B, C]    & GenFun[A :: B :: HNil, C]
+
+Function1[(A, B, C), D]  → Function3[A, B, C, D] & GenFun[A :: B :: C :: HNil, D]
+Function3[A, B, C, D]    → Function3[A, B, C, D] & GenFun[A :: B :: C :: HNil, D]
+
+Function4[A, B, C, D, E] → GenFun[A :: B :: C :: D :: HNil, E]
+```
+
+(a, b, c) =>
+
+
+```
+trait Function2[A, B, C] {
+  def apply(a: A, b: B): C
+}
+
+|
+v
+
+trait GenFun[I <: HList, O] {
+  def apply(i: I): O
+}
+
+trait Function2[A, B, C] extends GenFun[A :: B :: HNil, C] {
+  def apply(a: A, b: B): C
+  def apply(i: A :: B :: HNil): C = apply(i._1, i._2)
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -34,7 +34,6 @@ object Gen {
         case _ => ???
       }
 
-
     def accessTuple(n: Int)         = s"""tuple$arity._$n"""
     def accessArrayHList(n: Int)    = s"""arrayHList$arity.underlying(${n - 1})"""
     def accessLinkedHList(n: Int)   = s"""linkedHList$arity${1.until(n).map(_ => ".tail").mkString}.head"""
@@ -111,6 +110,16 @@ object Gen {
         -  val arrayHList$arity    = $mkArrayHList
         -  val linkedHList$arity   = $mkLinkedHList
         -  val unrolledHList$arity = $mkUnrolledHList
+        -  val nullHList$arity     = ${
+             1.to(arity).toList
+               .grouped(unroll).foldLeft("NullHList.nil") {
+                 case (p, c :: Nil) => s"new NullHListImpl(1, $c, null, null, null, $p)"
+                 case (p, c1 :: c2 :: Nil) => s"new NullHListImpl(2, $c1, $c2, null, null, $p)"
+                 case (p, c1 :: c2 :: c3 :: Nil) => s"new NullHListImpl(3, $c1, $c2, $c3, null, $p)"
+                 case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"new NullHListImpl(4, $c1, $c2, $c3, $c4, $p)"
+                 case _ => ???
+               }
+           }
         |}
       """
     }
@@ -130,17 +139,31 @@ object Gen {
         |
         |class CreationBench {
         -  @Benchmark def createScalaTuple$arity    = Tuple$arity(\"${1.to(arity).mkString("\", \"")}\")
+
         -  @Benchmark def createArrayHList$arity    = ArrayHListN(Array(\"${1.to(arity).mkString("\", \"")}\"))
+
         -  @Benchmark def createLinkedHList$arity   = ${1.to(arity).foldLeft("LinkedHNil") { case (p, c) =>
              "LinkedHCons(" + '"' + c + '"' + s", $p)"
            }}
+
         -  @Benchmark def createUnrolledHList$arity = ${1.to(arity).toList.grouped(unroll).foldLeft("UnrolledHNil") {
-             case (p, c :: Nil) => s"UnrolledHList1(${quote(c)}, $p)"
+             case (p, c :: Nil) =>                    s"UnrolledHList1(${quote(c)}, $p)"
              case (p, c1 :: c2 :: Nil) =>             s"UnrolledHList2(${quote(c1)}, ${quote(c2)}, $p)"
              case (p, c1 :: c2 :: c3 :: Nil) =>       s"UnrolledHList3(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, $p)"
              case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"UnrolledHList4(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, ${quote(c4)}, $p)"
              case _ => ???
            }}
+
+        -  @Benchmark def createNullHList$arity     = ${
+             1.to(arity).toList
+               .grouped(unroll).foldLeft("NullHList.nil") {
+                 case (p, c :: Nil) =>                    s"new NullHListImpl(1, ${quote(c)}, null, null, null, $p)"
+                 case (p, c1 :: c2 :: Nil) =>             s"new NullHListImpl(2, ${quote(c1)}, ${quote(c2)}, null, null, $p)"
+                 case (p, c1 :: c2 :: c3 :: Nil) =>       s"new NullHListImpl(3, ${quote(c1)}, ${quote(c2)}, ${quote(c3)}, null, $p)"
+                 case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"new NullHListImpl(4, ${quote(c1)}, ${quote(c2)}, ${quote(c3)}, ${quote(c4)}, $p)"
+                 case _ => ???
+               }
+             }
         |}
       """
     }
@@ -159,8 +182,11 @@ object Gen {
         |
         |class AccessLastBench {
         -  @Benchmark def lastScalaTuple$arity    = ${accessTuple(arity)}
+
         -  @Benchmark def lastArrayHList$arity    = ${accessArrayHList(arity)}
+
         -  @Benchmark def lastLinkedHList$arity   = ${accessLinkedHList(arity)}
+
         -  @Benchmark def lastUnrolledHList$arity = ${accessUnrolledHList(arity)}
         |}
       """
@@ -221,13 +247,13 @@ object Gen {
         |import DataDef._
         |
         |class TailBench {
-        -  @Benchmark def tailScalaTuple$arity = ${
+        -  @Benchmark def tailScalaTuple$arity    = ${
              if (arity == 1) "Nil" else s"Tuple${arity - 1}(${2.to(arity).map(accessTuple).mkString(", ")})" }
 
-        -  @Benchmark def tailArrayHList$arity = ${
+        -  @Benchmark def tailArrayHList$arity    = ${
              if (arity == 1) "ArrayHNil" else s"Tuple${arity - 1}(${2.to(arity).map(accessArrayHList).mkString(", ")})" }
 
-        -  @Benchmark def tailLinkedHList$arity = linkedHList$arity.tail
+        -  @Benchmark def tailLinkedHList$arity   = linkedHList$arity.tail
 
         -  @Benchmark def tailUnrolledHList$arity = ${(arity % 4) match {
              case 1 => s"unrolledHList$arity.tail"
@@ -235,6 +261,13 @@ object Gen {
              case 3 => s"UnrolledHList2(unrolledHList$arity.head2, unrolledHList$arity.head3, unrolledHList$arity.tail)"
              case 0 => s"UnrolledHList3(unrolledHList$arity.head2, unrolledHList$arity.head3, unrolledHList$arity.head4, unrolledHList$arity.tail)"
            }}
+
+        -  @Benchmark def tailNullHList$arity     = (nullHList$arity.size match {
+        -    case 1 => nullHList$arity.asInstanceOf[NullHListImpl].tail
+        -    case 2 => { val c = nullHList$arity.clone.asInstanceOf[NullHListImpl]; c.size -= 1; c.e2 = null; c }
+        -    case 3 => { val c = nullHList$arity.clone.asInstanceOf[NullHListImpl]; c.size -= 1; c.e3 = null; c }
+        -    case 4 => { val c = nullHList$arity.clone.asInstanceOf[NullHListImpl]; c.size -= 1; c.e4 = null; c }
+        -  })
         |}
       """
     }
