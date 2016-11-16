@@ -2,7 +2,7 @@
 set -eux
 
 rm -rf "jmh-bench/out/"*
-rm -rf "jmh-bench/pdf2/"*
+rm -rf "jmh-bench/pdf/"*
 
 cat "jmh-bench/sbt.out"             |\
 sed "s,\x1B\[[0-9;]*[a-zA-Z],,g"    |\
@@ -34,7 +34,7 @@ for plot in       \
     gnuplot <<- EOF
       set terminal pdf lw 3 dashed
       set title "$title"
-      set output "jmh-bench/pdf2/$plot.pdf"
+      set output "jmh-bench/pdf/$plot.pdf"
 
       set xrange [1:22]
       set xlabel "Tuple Size"
