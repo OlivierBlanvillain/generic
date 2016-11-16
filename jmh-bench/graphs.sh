@@ -4,20 +4,21 @@ set -eux
 rm -rf "jmh-bench/out/"*
 rm -rf "jmh-bench/pdf/"*
 
-cat "jmh-bench/sbt.out"             |\
+cat "jmh-bench/run2.out"            |\
 sed "s,\x1B\[[0-9;]*[a-zA-Z],,g"    |\
 grep -A1000 -e "\[info\] Benchmark" |\
 tail -n +1 | head -n -1             |\
 tee "jmh-bench/out/results.run"
 
 for plot in       \
+  LastBench       \
   ScanBench       \
-  AccessLastBench \
+  ConsBench       \
   CreationBench   \
   TailBench; do
     for type in   \
       ArrayHList  \
-      LinkedHList \
+      NullHList \
       ScalaTuple  \
       UnrolledHList; do
         cat "jmh-bench/out/results.run" |\
@@ -36,7 +37,7 @@ for plot in       \
       set title "$title"
       set output "jmh-bench/pdf/$plot.pdf"
 
-      set xrange [1:22]
+      set xrange [1:10]
       set xlabel "Tuple Size"
       set ylabel "Throughput (Mops/sec)"
 
@@ -52,8 +53,8 @@ for plot in       \
       plot \
         "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 1, \
         "jmh-bench/out/$plot.ArrayHList.run"    using $arity:(\$$thrpt/1000000) title "ArrayHList"                                with lines ls 2, \
-        "jmh-bench/out/$plot.LinkedHList.run"   using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 3, \
-        "jmh-bench/out/$plot.LinkedHList.run"   using $arity:(\$$thrpt/1000000) title "LinkedHList"                               with lines ls 4, \
+        "jmh-bench/out/$plot.NullHList.run"     using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 3, \
+        "jmh-bench/out/$plot.NullHList.run"     using $arity:(\$$thrpt/1000000) title "NullHList"                                 with lines ls 4, \
         "jmh-bench/out/$plot.ScalaTuple.run"    using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 5, \
         "jmh-bench/out/$plot.ScalaTuple.run"    using $arity:(\$$thrpt/1000000) title "ScalaTuple"                                with lines ls 6, \
         "jmh-bench/out/$plot.UnrolledHList.run" using $arity:(\$$thrpt - \$$ci)/1000000:(\$$thrpt + \$$ci)/1000000 notitle with filledcurves ls 7, \

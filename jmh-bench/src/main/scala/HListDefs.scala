@@ -145,14 +145,14 @@ object NullHList {
     def tail: T = {
       // Safe because NullHListImpl is the only implementation of NullHList.
       val i = l.asInstanceOf[NullHListImpl]
-      if (!i.e4.==(ø))
+      if (!i.e4.asInstanceOf[AnyRef].eq(ø))
         NullHListImpl(i.e2, i.e3, i.e4, ø, i.t)
-      else if (i.e4 == ø)
+      else if (i.e4.asInstanceOf[AnyRef].eq(ø))
         NullHListImpl(i.e2, i.e3, ø, ø, i.t)
-      else if (i.e3 == ø)
+      else if (i.e3.asInstanceOf[AnyRef].eq(ø))
         NullHListImpl(i.e2, ø, ø, ø, i.t)
       else
-        i.tail
+        i.t
     }.asInstanceOf[T]
   }
 }

@@ -22,22 +22,7 @@ object Gen {
     val `a::n`       = synVals.reverse.foldLeft("HNil") { case (x, e) => s"HCons($e, $x)" }
     val `a:A..n:N`   = synTypedVals mkString ", "
 
-    val mkTuple         = s"Tuple$arity(${1.to(arity).mkString(", ")})"
-    val mkArrayHList    = s"ArrayHListN(Array(${1.to(arity).mkString(", ")}))"
-    val mkLinkedHList   = 1.to(arity).foldLeft("LinkedHNil") { case (p, c) => s"LinkedHCons($c, $p)" }
-    val mkUnrolledHList = 1.to(arity).toList
-      .grouped(unroll).foldLeft("UnrolledHNil") {
-        case (p, c :: Nil) => s"UnrolledHList1($c, $p)"
-        case (p, c1 :: c2 :: Nil) => s"UnrolledHList2($c1, $c2, $p)"
-        case (p, c1 :: c2 :: c3 :: Nil) => s"UnrolledHList3($c1, $c2, $c3, $p)"
-        case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"UnrolledHList4($c1, $c2, $c3, $c4, $p)"
-        case _ => ???
-      }
-
-    def accessTuple(n: Int)         = s"""tuple$arity._$n"""
-    def accessArrayHList(n: Int)    = s"""arrayHList$arity.underlying(${n - 1})"""
-    def accessLinkedHList(n: Int)   = s"""linkedHList$arity${1.until(n).map(_ => ".tail").mkString}.head"""
-    def accessUnrolledHList(n: Int) = s"""unrolledHList$arity${1.to((n - 1) / unroll).map(_ => ".tail").mkString}.e${(n - 1) % unroll + 1}"""
+    def quote(s: Any) = s""""$s""""
 
     def measure(what: String, how: String) =
       s"""measure method "$what #${"%02d".format(arity)}" config (benchRuns -> 10000) in { using(Gen.unit("test")) in { _ => $how }}"""
@@ -108,6 +93,7 @@ object Gen {
         |object DataDef {
         -  val tuple$arity         = Tuple$arity(${1.to(arity).mkString(", ")})
 
+        -  // : ${"Int U_:: " * arity + "UnrolledHNil"}
         -  val unrolledHList$arity = ${
              1.to(arity).toList
                .grouped(unroll).foldLeft("UnrolledHNil") {
@@ -119,13 +105,13 @@ object Gen {
                }
              }
 
-        -  val arrayHList$arity    : ${"Int A_:: " * arity + "ArrayHNil"} = ArrayHListN(Array(${1.to(arity).mkString(", ")}))
+        -  val arrayHList$arity    : ${"Int A_:: " * arity + "ArrayHNil   "} = ArrayHListN(Array(${1.to(arity).mkString(", ")}))
 
-        -  val linkedHList$arity   : ${"Int L_:: " * arity + "LinkedHNil"} = ${
+        -  val linkedHList$arity   : ${"Int L_:: " * arity + "LinkedHNil  "} = ${
              1.to(arity).foldLeft("LinkedHNil") { case (p, c) => s"LinkedHCons($c, $p)" }
            }
 
-        -  val nullHList$arity     : ${"Int N_:: " * arity + "NullHNil"} = ${
+        -  val nullHList$arity     : ${"Int N_:: " * arity + "NullHNil    "} = ${
              1.to(arity).toList
                .grouped(unroll).foldLeft("NullHList.nil") {
                  case (p, c :: Nil) => s"new NullHListImpl($c, ø, ø, ø, $p)"
@@ -145,8 +131,6 @@ object Gen {
     def content(tv: TemplateVals) = {
       import tv._
 
-      def quote(s: Any) = s""""$s""""
-
       block"""
         |package bench
         |
@@ -155,27 +139,28 @@ object Gen {
         |class CreationBench {
         -  @Benchmark def createScalaTuple$arity    = Tuple$arity(\"${1.to(arity).mkString("\", \"")}\")
 
-        -  @Benchmark def createArrayHList$arity    = ArrayHListN(Array(\"${1.to(arity).mkString("\", \"")}\"))
+        -  @Benchmark def createArrayHList$arity    = ${
+             arity match {
+               case 1 => s"ArrayHList1(${quote(1)})"
+               case 2 => s"ArrayHList2(${quote(1)}, ${quote(2)})"
+               case 3 => s"ArrayHList3(${quote(1)}, ${quote(2)}, ${quote(3)})"
+               case 4 => s"ArrayHList4(${quote(1)}, ${quote(2)}, ${quote(3)}, ${quote(4)})"
+               case _ => s"ArrayHListN(Array(${1.to(arity).map(quote).mkString(", ")}))"
+             }
+           }
 
         -  @Benchmark def createLinkedHList$arity   = ${1.to(arity).foldLeft("LinkedHNil") { case (p, c) =>
              "LinkedHCons(" + '"' + c + '"' + s", $p)"
            }}
 
         -  @Benchmark def createUnrolledHList$arity = ${
-             arity match {
-               case 1 => s"ArrayHList1(${quote(1)})"
-               case 2 => s"ArrayHList2(${quote(1)}, ${quote(2)})"
-               case 3 => s"ArrayHList3(${quote(1)}, ${quote(2)}, ${quote(3)})"
-               case 4 => s"ArrayHList4(${quote(1)}, ${quote(2)}, ${quote(3)}, ${quote(4)})"
-               case _ =>
-                 1.to(arity).toList.grouped(unroll).foldLeft("UnrolledHNil") {
-                    case (p, c :: Nil) =>                    s"UnrolledHList1(${quote(c)}, $p)"
-                    case (p, c1 :: c2 :: Nil) =>             s"UnrolledHList2(${quote(c1)}, ${quote(c2)}, $p)"
-                    case (p, c1 :: c2 :: c3 :: Nil) =>       s"UnrolledHList3(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, $p)"
-                    case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"UnrolledHList4(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, ${quote(c4)}, $p)"
-                    case _ => ???
-                  }
-               }
+             1.to(arity).toList.grouped(unroll).foldLeft("UnrolledHNil") {
+                case (p, c :: Nil) =>                    s"UnrolledHList1(${quote(c)}, $p)"
+                case (p, c1 :: c2 :: Nil) =>             s"UnrolledHList2(${quote(c1)}, ${quote(c2)}, $p)"
+                case (p, c1 :: c2 :: c3 :: Nil) =>       s"UnrolledHList3(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, $p)"
+                case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"UnrolledHList4(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, ${quote(c4)}, $p)"
+                case _ => ???
+              }
             }
 
         -  @Benchmark def createNullHList$arity     = ${
@@ -193,29 +178,39 @@ object Gen {
     }
   }
 
-  // case object GenJMHLastBench extends Template {
-  //   val path = "jmh-bench/src/main/scala/LastBench.scala"
-  //   def content(tv: TemplateVals) = {
-  //     import tv._
+  case object GenJMHLastBench extends Template {
+    val path = "jmh-bench/src/main/scala/LastBench.scala"
+    def content(tv: TemplateVals) = {
+      import tv._
 
-  //     block"""
-  //       |package bench
-  //       |
-  //       |import org.openjdk.jmh.annotations._
-  //       |import DataDef._
-  //       |
-  //       |class LastBench {
-  //       -  @Benchmark def lastScalaTuple$arity    = ${accessTuple(arity)}
+      block"""
+        |package bench
+        |
+        |import org.openjdk.jmh.annotations._
+        |import DataDef._
+        |
+        |class LastBench {
+        -  @Benchmark def lastScalaTuple$arity    = tuple$arity._$arity
 
-  //       -  @Benchmark def lastArrayHList$arity    = ${accessArrayHList(arity)}
+        -  @Benchmark def lastArrayHList$arity    = ${
+             arity match {
+               case 1 => s"arrayHList$arity.asInstanceOf[ArrayHList1[Int]].e1"
+               case 2 => s"arrayHList$arity.asInstanceOf[ArrayHList2[Int, Int]].e2"
+               case 3 => s"arrayHList$arity.asInstanceOf[ArrayHList3[Int, Int, Int]].e3"
+               case 4 => s"arrayHList$arity.asInstanceOf[ArrayHList4[Int, Int, Int, Int]].e4"
+               case _ => s"arrayHList$arity.asInstanceOf[ArrayHListN[Any, ArrayHNil]].underlying.last"
+             }
+           }
 
-  //       -  @Benchmark def lastLinkedHList$arity   = ${accessLinkedHList(arity)}
+        -  @Benchmark def lastLinkedHList$arity   = linkedHList$arity${1.until(arity).map(_ => ".tail").mkString}.head
 
-  //       -  @Benchmark def lastUnrolledHList$arity = ${accessUnrolledHList(arity)}
-  //       |}
-  //     """
-  //   }
-  // }
+        -  @Benchmark def lastUnrolledHList$arity = ${
+             s"unrolledHList$arity${1.to((arity - 1) / unroll).map(_ => ".tail.asInstanceOf[UnrolledHList4[_, _, _, _, UnrolledHNil]]").mkString}.e${(arity - 1) % unroll + 1}"
+           }
+        |}
+      """
+    }
+  }
 
   case object GenJMHScanBench extends Template {
     val path = "jmh-bench/src/main/scala/ScanBench.scala"
@@ -315,7 +310,28 @@ object Gen {
     }
   }
 
-  // cons?
+  case object GenJMHConsBench extends Template {
+    val path = "jmh-bench/src/main/scala/ConsBench.scala"
+    def content(tv: TemplateVals) = {
+      import tv._
+
+      block"""
+        |package bench
+        |
+        |import org.openjdk.jmh.annotations._
+        |import DataDef._
+        |
+        |class ConsBench {
+        -  @Benchmark def consScalaTuple$arity    = ${
+             s"Tuple${arity + 1}(${quote(0)}, ${1.to(arity).map(i => s"tuple$arity._$i").mkString(", ")})" }
+        -  @Benchmark def consArrayHList$arity    = ArrayHList.cons("s", arrayHList$arity)
+        -  @Benchmark def consLinkedHList$arity   = LinkedHList.cons("s", linkedHList$arity)
+        -  @Benchmark def consUnrolledHList$arity = UnrolledHList.cons("s", unrolledHList$arity)
+        -  @Benchmark def consNullHList$arity     = NullHList.cons("s", nullHList$arity)
+        |}
+      """
+    }
+  }
 
   def main(args: Array[String]): Unit = {
     import java.nio.file.{Paths, Files}
@@ -324,9 +340,10 @@ object Gen {
     List(
       GenJMHDataDef,
       GenJMHCreationBench,
-      // GenJMHLastBench,
+      GenJMHLastBench,
       GenJMHScanBench,
-      GenJMHTailBench
+      GenJMHTailBench,
+      GenJMHConsBench
     ).foreach { t =>
       Files.write(Paths.get(t.path), t.body.getBytes(StandardCharsets.UTF_8))
     }
