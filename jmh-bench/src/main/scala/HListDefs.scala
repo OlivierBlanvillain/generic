@@ -115,28 +115,40 @@ sealed trait NullHList
 sealed trait N_::[+H, +T <: NullHList] extends NullHList
 sealed trait NullHNil extends NullHList
 
-final case class NullHListImpl(e1: Any, e2: Any, e3: Any, e4: Any, t: NullHList) extends NullHNil with N_::[Any, NullHNil]
+class NullHListImpl extends NullHNil with N_::[Any, NullHNil] {
+  def this(T: NullHList) =                                     { this(); this.t = T; }
+  def this(E1: Any, T: NullHList) =                            { this(); this.t = T; this.e1 = E1; }
+  def this(E1: Any, E2: Any, T: NullHList) =                   { this(); this.t = T; this.e1 = E1; this.e2 = E2; }
+  def this(E1: Any, E2: Any, E3: Any, T: NullHList) =          { this(); this.t = T; this.e1 = E1; this.e2 = E2; this.e3 = E3; }
+  def this(E1: Any, E2: Any, E3: Any, E4: Any, T: NullHList) = { this(); this.t = T; this.e1 = E1; this.e2 = E2; this.e3 = E3; this.e4 = E4; }
+
+  var e1: Any = ø
+  var e2: Any = ø
+  var e3: Any = ø
+  var e4: Any = ø
+  var t: NullHList = null
+}
 
 final object ø
 
 object NullHList {
-  val nil: NullHNil = new NullHListImpl(ø, ø, ø, ø, null).asInstanceOf[NullHNil]
+  val nil: NullHNil = new NullHListImpl(null).asInstanceOf[NullHNil]
 
   def impl(l: NullHList): NullHListImpl = l.asInstanceOf[NullHListImpl]
 
   def cons[H, T <: NullHList](h: H, t: T): H N_:: T = {
     // Safe because NullHListImpl is the only implementation of NullHList.
     val i = t.asInstanceOf[NullHListImpl]
-    if (i.e4 == ø)
-      NullHListImpl(i.e1, i.e2, i.e3, h, i.t)
-    else if (i.e3 == ø)
-      NullHListImpl(i.e1, i.e2, h, ø, i.t)
-    else if (i.e2 == ø)
-      NullHListImpl(i.e1, h, ø, ø, i.t)
-    else if (i.e1 == ø)
-      NullHListImpl(h, ø, ø, ø, i.t)
-    else
-      NullHListImpl(ø, ø, ø, ø, t)
+    if (!i.e4.asInstanceOf[AnyRef].eq(ø))      // (x, x, x, x, tail)
+      new NullHListImpl(h, i)
+    else if (!i.e3.asInstanceOf[AnyRef].eq(ø)) // (x, x, x, ø, tail)
+      new NullHListImpl(h, i.e1, i.e2, i.e3, i.t)
+    else if (!i.e2.asInstanceOf[AnyRef].eq(ø)) // (x, x, ø, ø, tail)
+      new NullHListImpl(h, i.e1, i.e2, i.t)
+    else if (!i.e1.asInstanceOf[AnyRef].eq(ø)) // (x, ø, ø, ø, tail)
+      new NullHListImpl(h, i.e1, i.t)
+    else                                       // (ø, ø, ø, ø, tail)
+      new NullHListImpl(h, i)
   }.asInstanceOf[H N_:: T]
 
   implicit class headTail[H, T <: NullHList](l: H N_:: T) {
@@ -145,14 +157,16 @@ object NullHList {
     def tail: T = {
       // Safe because NullHListImpl is the only implementation of NullHList.
       val i = l.asInstanceOf[NullHListImpl]
-      if (!i.e4.asInstanceOf[AnyRef].eq(ø))
-        NullHListImpl(i.e2, i.e3, i.e4, ø, i.t)
-      else if (i.e4.asInstanceOf[AnyRef].eq(ø))
-        NullHListImpl(i.e2, i.e3, ø, ø, i.t)
-      else if (i.e3.asInstanceOf[AnyRef].eq(ø))
-        NullHListImpl(i.e2, ø, ø, ø, i.t)
-      else
+      if (!i.e4.asInstanceOf[AnyRef].eq(ø))      // (x, x, x, x, tail)
+        new NullHListImpl(i.e2, i.e3, i.e4, i.t)
+      else if (!i.e3.asInstanceOf[AnyRef].eq(ø)) // (x, x, x, ø, tail)
+        new NullHListImpl(i.e2, i.e3, i.t)
+      else if (!i.e2.asInstanceOf[AnyRef].eq(ø)) // (x, x, ø, ø, tail)
+        new NullHListImpl(i.e2, i.t)
+      else if (!i.e1.asInstanceOf[AnyRef].eq(ø)) // (x, ø, ø, ø, tail)
         i.t
+      else                                       // (ø, ø, ø, ø, tail)
+        ???
     }.asInstanceOf[T]
   }
 }
