@@ -4,7 +4,7 @@ set -eux
 rm -rf "jmh-bench/out/"*
 rm -rf "jmh-bench/pdf/"*
 
-cat "jmh-bench/run2.out"            |\
+cat "jmh-bench/run3.out"            |\
 sed "s,\x1B\[[0-9;]*[a-zA-Z],,g"    |\
 grep -A1000 -e "\[info\] Benchmark" |\
 tail -n +1 | head -n -1             |\

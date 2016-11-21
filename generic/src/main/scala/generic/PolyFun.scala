@@ -1,11 +1,27 @@
 package generic
 
+
+def bar[A](b: Bar { type F = A }): A
+
+def f[A](n: A)[B](implicit l: Int)(u: B): Int = null
+
+f(1)(2)
+
+f(1).explicitly(3)(2)
+
+explicitly(f(1))(3)(2)
+
+def f[A](n: A)(l: Int, u: Int)(implicit e: Ordering[A]): String = null
+
+val l: TypeApp1[[A] => A => (Int, Int) => implicit Ordering[A] => String] = f _
+
+
 trait ImplicitFunction1[A, B] {
   def apply(implicit a: A): B
 }
 
 object Predef {
-  def explicitly[I, O](f: ImplicitFunction1[I, O], a: I): O = {
+  inline def explicitly[I, O](f: ImplicitFunction1[I, O])(a: I): O = {
     implicit val ia: I = a
     f.apply
   }
@@ -58,33 +74,30 @@ object Demo {
 
   // val l: TypeApp1[[A] => A => (Int, Int) => implicit Ordering[A] => String] = f _
 
-  def mkCollection[C[_]](collection: TypeApp1[[A] => Seq[A] => C[A]]): TypeApp1[[A] => A => C[A]] =
-    new TypeApp1[[A] => A => C[A]] {
-      def apply[A]: A => C[A] = a => collection[A](Seq(a))
-    }
+  // def mkCollection[C[_]](collection: TypeApp1[[A] => Seq[A] => C[A]]): TypeApp1[[A] => A => C[A]] =
+  //   new TypeApp1[[A] => A => C[A]] {
+  //     def apply[A]: A => C[A] = a => collection[A](Seq(a))
+  //   }
 
-  val mkCol: KindApp1[[C[_]] => TypeApp1[[A] => Seq[A] => C[A]]] = null
+  // val mkCol: KindApp1[[C[_]] => TypeApp1[[A] => Seq[A] => C[A]]] = null
 
-  def mkCollection2[C[_, _]](collection: TypeApp2[[A, B] => (A, B) => C[A, B]]) = null
+  // def mkCollection2[C[_, _]](collection: TypeApp2[[A, B] => (A, B) => C[A, B]]) = null
 
-  // val mkSet = mkCollection[Set](null)
+  // // val mkSet = mkCollection[Set](null)
 
-  // mkSet[Int](1): Set[Int]
+  // // mkSet[Int](1): Set[Int]
 
-  // mkCollection(Set.apply _)
+  // // mkCollection(Set.apply _)
 
-  // def mkCollection[A, C[_]](collection: TypeApp1[A => C[A]], value: A): C[A] = collection[A]
+  // // def mkCollection[A, C[_]](collection: TypeApp1[A => C[A]], value: A): C[A] = collection[A]
 
 }
-
-trait TATTT[A, B]
 
 object L {
   // type Size = UTypeApp1[F = [L <: HList] => L => Nat]
   def f[A, B]: A = null.asInstanceOf[A]
 
   f[A = Int, B = String]
-  // val a = new TATTT[A = Int, B = String] {}
 }
 
 
