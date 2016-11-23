@@ -53,61 +53,107 @@ object ArrayHList {
 // HLists as linked lists -----------------------------------------------------
 
 sealed trait LinkedHList
-sealed trait L_::[+H, +T <: LinkedHList] extends LinkedHList
 sealed trait LinkedHNil extends LinkedHList
 final case object LinkedHNil extends LinkedHNil
-final case class LinkedHCons[H, T <: LinkedHList](head: H, tail: T)
-    extends (H L_:: T)
 
-object LinkedHList {
-  def cons[H, T <: LinkedHList](h: H, t: T): H L_:: T = LinkedHCons(h, t)
-
-  implicit class headTail[H, T <: LinkedHList](l: H L_:: T) {
-    def head: H = { val LinkedHCons(h, _) = l; h }
-
-    def tail: T = { val LinkedHCons(_, t) = l; t }
-  }
+sealed trait L_::[+H, +T <: LinkedHList] extends LinkedHList {
+  def head: H
+  def tail: T
 }
 
-// HLists as unrolled linked lists --------------------------------------------
+final case class LinkedHList1[T1](e1: T1) extends L_::[T1, LinkedHNil] {
+  def head: T1 = e1
+  def tail: LinkedHNil = LinkedHNil
+}
 
-sealed trait UnrolledHList
-sealed trait U_::[+H, +T <: UnrolledHList] extends UnrolledHList
-sealed trait UnrolledHNil extends UnrolledHList
+final case class LinkedHList2[T1, T2](e1: T1, e2: T2) extends L_::[T1, L_::[T2, LinkedHNil]] {
+  def head: T1 = e1
+  def tail: L_::[T2, LinkedHNil] = LinkedHList1(e2)
+}
 
-final case object UnrolledHNil extends UnrolledHNil
-final case class UnrolledHList1[H1, T <: UnrolledHList](e1: H1, t: T) extends (H1 U_:: T)
-final case class UnrolledHList2[H1, H2, T <: UnrolledHList](e1: H1, e2: H2, t: T) extends (H1 U_:: H2 U_:: T)
-final case class UnrolledHList3[H1, H2, H3, T <: UnrolledHList](e1: H1, e2: H2, e3: H3, t: T) extends (H1 U_:: H2 U_:: H3 U_:: T)
-final case class UnrolledHList4[H1, H2, H3, H4, T <: UnrolledHList](e1: H1, e2: H2, e3: H3, e4: H4, t: T) extends (H1 U_:: H2 U_:: H3 U_:: H4 U_:: T)
+final case class LinkedHList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends L_::[T1, L_::[T2, L_::[T3, LinkedHNil]]] {
+  def head: T1 = e1
+  def tail: L_::[T2, L_::[T3, LinkedHNil]] = LinkedHList2(e2, e3)
+}
 
-object UnrolledHList {
-  def cons[H, T <: UnrolledHList](h: H, t: T): H U_:: T = (t match {
-    case UnrolledHNil                      => UnrolledHList1(h, UnrolledHNil)
-    case UnrolledHList1(e1, tail)          => UnrolledHList2(h, e1, tail)
-    case UnrolledHList2(e1, e2, tail)      => UnrolledHList3(h, e1, e2, tail)
-    case UnrolledHList3(e1, e2, e3, tail)  => UnrolledHList4(h, e1, e2, e3, tail)
-    case _                                 => UnrolledHList1(h, t)
+final case class LinkedHList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4) extends L_::[T1, L_::[T2, L_::[T3, L_::[T4, LinkedHNil]]]] {
+  def head: T1 = e1
+  def tail: L_::[T2, L_::[T3, L_::[T4, LinkedHNil]]] = LinkedHList3(e2, e3, e4)
+}
+
+final case class LinkedHCons[+H, +T <: LinkedHList](head: H, tail: T) extends L_::[H, T]
+
+object LinkedHList {
+  def cons[H, T <: LinkedHList](h: H, t: T): H L_:: T = (t match {
+    case _: LinkedHCons[_, _]        => LinkedHCons(h, t)
+    case LinkedHNil                  => LinkedHList1(h)
+    case LinkedHList1(e1)            => LinkedHList2(h, e1)
+    case LinkedHList2(e1, e2)        => LinkedHList3(h, e1, e2)
+    case LinkedHList3(e1, e2, e3)    => LinkedHList4(h, e1, e2, e3)
+    case _: LinkedHList4[_, _, _, _] => LinkedHCons(h, t)
+  }).asInstanceOf[H L_:: T]
+}
+
+// HLists as unrolled 4 linked lists --------------------------------------------
+
+sealed trait Unrolled4HList
+sealed trait U_::[+H, +T <: Unrolled4HList] extends Unrolled4HList
+sealed trait Unrolled4HNil extends Unrolled4HList
+
+final case object Unrolled4HNil extends Unrolled4HNil
+final case class Unrolled4HList1[H1, T <: Unrolled4HList](e1: H1, t: T) extends (H1 U_:: T)
+final case class Unrolled4HList2[H1, H2, T <: Unrolled4HList](e1: H1, e2: H2, t: T) extends (H1 U_:: H2 U_:: T)
+final case class Unrolled4HList3[H1, H2, H3, T <: Unrolled4HList](e1: H1, e2: H2, e3: H3, t: T) extends (H1 U_:: H2 U_:: H3 U_:: T)
+final case class Unrolled4HList4[H1, H2, H3, H4, T <: Unrolled4HList](e1: H1, e2: H2, e3: H3, e4: H4, t: T) extends (H1 U_:: H2 U_:: H3 U_:: H4 U_:: T)
+
+object Unrolled4HList {
+  def cons[H, T <: Unrolled4HList](h: H, t: T): H U_:: T = (t match {
+    case Unrolled4HNil                      => Unrolled4HList1(h, Unrolled4HNil)
+    case Unrolled4HList1(e1, tail)          => Unrolled4HList2(h, e1, tail)
+    case Unrolled4HList2(e1, e2, tail)      => Unrolled4HList3(h, e1, e2, tail)
+    case Unrolled4HList3(e1, e2, e3, tail)  => Unrolled4HList4(h, e1, e2, e3, tail)
+    case _                                 => Unrolled4HList1(h, t)
   }).asInstanceOf[H U_:: T]
 
-  implicit class headTail[H, T <: UnrolledHList](l: H U_:: T) {
-    def head: H = ((l: UnrolledHList) match {
-      case UnrolledHNil                     => ???
-      case u: UnrolledHList1[_, _]          => u.e1
-      case u: UnrolledHList2[_, _, _]       => u.e1
-      case u: UnrolledHList3[_, _, _, _]    => u.e1
-      case u: UnrolledHList4[_, _, _, _, _] => u.e1
+  implicit class headTail[H, T <: Unrolled4HList](l: H U_:: T) {
+    def head: H = ((l: Unrolled4HList) match {
+      case Unrolled4HNil                     => ???
+      case u: Unrolled4HList1[_, _]          => u.e1
+      case u: Unrolled4HList2[_, _, _]       => u.e1
+      case u: Unrolled4HList3[_, _, _, _]    => u.e1
+      case u: Unrolled4HList4[_, _, _, _, _] => u.e1
     }).asInstanceOf[H]
 
-    def tail: T = ((l: UnrolledHList) match {
-      case UnrolledHNil                         => ???
-      case UnrolledHList1(e1, tail)             => tail
-      case UnrolledHList2(e1, e2, tail)         => UnrolledHList1(e2, tail)
-      case UnrolledHList3(e1, e2, e3, tail)     => UnrolledHList2(e2, e3, tail)
-      case UnrolledHList4(e1, e2, e3, e4, tail) => UnrolledHList3(e2, e3, e3, tail)
+    def tail: T = ((l: Unrolled4HList) match {
+      case Unrolled4HNil                         => ???
+      case Unrolled4HList1(e1, tail)             => tail
+      case Unrolled4HList2(e1, e2, tail)         => Unrolled4HList1(e2, tail)
+      case Unrolled4HList3(e1, e2, e3, tail)     => Unrolled4HList2(e2, e3, tail)
+      case Unrolled4HList4(e1, e2, e3, e4, tail) => Unrolled4HList3(e2, e3, e3, tail)
     }).asInstanceOf[T]
   }
 }
+
+// HLists as unrolled 3 linked lists --------------------------------------------
+
+sealed trait Unrolled3HList
+sealed trait U3_::[+H, +T <: Unrolled3HList] extends Unrolled3HList
+sealed trait Unrolled3HNil extends Unrolled3HList
+
+final case object Unrolled3HNil extends Unrolled3HNil
+final case class Unrolled3HList1[H1, T <: Unrolled3HList](e1: H1, t: T) extends (H1 U3_:: T)
+final case class Unrolled3HList2[H1, H2, T <: Unrolled3HList](e1: H1, e2: H2, t: T) extends (H1 U3_:: H2 U3_:: T)
+final case class Unrolled3HList3[H1, H2, H3, T <: Unrolled3HList](e1: H1, e2: H2, e3: H3, t: T) extends (H1 U3_:: H2 U3_:: H3 U3_:: T)
+
+// HLists as unrolled 2 linked lists --------------------------------------------
+
+sealed trait Unrolled2HList
+sealed trait U2_::[+H, +T <: Unrolled2HList] extends Unrolled2HList
+sealed trait Unrolled2HNil extends Unrolled2HList
+
+final case object Unrolled2HNil extends Unrolled2HNil
+final case class Unrolled2HList1[H1, T <: Unrolled2HList](e1: H1, t: T) extends (H1 U2_:: T)
+final case class Unrolled2HList2[H1, H2, T <: Unrolled2HList](e1: H1, e2: H2, t: T) extends (H1 U2_:: H2 U2_:: T)
 
 // HLists as null unrolled linked lists --------------------------------------------
 
