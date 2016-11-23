@@ -1,19 +1,19 @@
 package generic
 
 
-def bar[A](b: Bar { type F = A }): A
+// def bar[A](b: Bar { type F = A }): A
 
-def f[A](n: A)[B](implicit l: Int)(u: B): Int = null
+// def f[A](n: A)[B](implicit l: Int)(u: B): Int = null
 
-f(1)(2)
+// f(1)(2)
 
-f(1).explicitly(3)(2)
+// f(1).explicitly(3)(2)
 
-explicitly(f(1))(3)(2)
+// explicitly(f(1))(3)(2)
 
-def f[A](n: A)(l: Int, u: Int)(implicit e: Ordering[A]): String = null
+// def f[A](n: A)(l: Int, u: Int)(implicit e: Ordering[A]): String = null
 
-val l: TypeApp1[[A] => A => (Int, Int) => implicit Ordering[A] => String] = f _
+// val l: TypeApp1[[A] => A => (Int, Int) => implicit Ordering[A] => String] = f _
 
 
 trait ImplicitFunction1[A, B] {
