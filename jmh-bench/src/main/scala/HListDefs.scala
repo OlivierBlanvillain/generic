@@ -3,7 +3,7 @@ package bench
 // HLists as Arrays -----------------------------------------------------------
 
 sealed trait ArrayHList extends Any
-sealed trait A_::[H, T <: ArrayHList] extends Any with ArrayHList // Should be [+H, +T <: ArrayHList], see #1500
+sealed trait A_::[+H, +T <: ArrayHList] extends ArrayHList
 sealed trait ArrayHNil extends ArrayHList
 
 final case object ArrayHNil extends ArrayHNil
@@ -11,7 +11,7 @@ final case class ArrayHList1[T1](e1: T1) extends A_::[T1, ArrayHNil]
 final case class ArrayHList2[T1, T2](e1: T1, e2: T2) extends A_::[T1, A_::[T2, ArrayHNil]]
 final case class ArrayHList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends A_::[T1, A_::[T2, A_::[T3, ArrayHNil]]]
 final case class ArrayHList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4) extends A_::[T1, A_::[T2, A_::[T3, A_::[T4, ArrayHNil]]]]
-final case class ArrayHListN[H, T <: ArrayHList](underlying: Array[Any]) extends AnyVal with (H A_:: T)
+final case class ArrayHListN[H, T <: ArrayHList](underlying: Array[Any]) extends (H A_:: T)
 
 object ArrayHList {
   def cons[H, T <: ArrayHList](h: H, t: T): H A_:: T = (
@@ -53,46 +53,58 @@ object ArrayHList {
 // HLists as linked lists -----------------------------------------------------
 
 sealed trait LinkedHList
+
 sealed trait LinkedHNil extends LinkedHList
 final case object LinkedHNil extends LinkedHNil
 
 sealed trait L_::[+H, +T <: LinkedHList] extends LinkedHList {
   def head: H
   def tail: T
+
+  def isDefined = true
+  def get       = this
+  def _1        = head
+  def _2        = tail
 }
 
-final case class LinkedHList1[T1](e1: T1) extends L_::[T1, LinkedHNil] {
+object LinkedHList {
+  def cons[H, T <: LinkedHList](h: H, t: T): L_::[H, T] =
+    (t match {
+      case _: LinkedHListN[_, _]       => LinkedHListN(h, t)
+      case LinkedHNil                  => LinkedHList1(h)
+      case LinkedHList1(e1)            => LinkedHList2(h, e1)
+      case LinkedHList2(e1, e2)        => LinkedHList3(h, e1, e2)
+      case LinkedHList3(e1, e2, e3)    => LinkedHList4(h, e1, e2, e3)
+      case _: LinkedHList4[_, _, _, _] => LinkedHListN(h, t)
+    }).asInstanceOf[L_::[H, T]]
+
+  def unapply[H, T <: LinkedHList](t: L_::[H, T]): L_::[H, T] = t
+}
+
+case class LinkedHListN[+H, +T <: LinkedHList](head: H, tail: T) extends L_::[H, T]
+
+case class LinkedHList1[T1](e1: T1) extends L_::[T1, LinkedHNil] {
   def head: T1 = e1
   def tail: LinkedHNil = LinkedHNil
 }
 
-final case class LinkedHList2[T1, T2](e1: T1, e2: T2) extends L_::[T1, L_::[T2, LinkedHNil]] {
-  def head: T1 = e1
-  def tail: L_::[T2, LinkedHNil] = LinkedHList1(e2)
-}
+case class LinkedHList2[T1, T2](e1: T1, e2: T2)
+  extends L_::[T1, L_::[T2, LinkedHNil]] {
+    def head: T1 = e1
+    def tail: L_::[T2, LinkedHNil] = LinkedHList1(e2)
+  }
 
-final case class LinkedHList3[T1, T2, T3](e1: T1, e2: T2, e3: T3) extends L_::[T1, L_::[T2, L_::[T3, LinkedHNil]]] {
-  def head: T1 = e1
-  def tail: L_::[T2, L_::[T3, LinkedHNil]] = LinkedHList2(e2, e3)
-}
+case class LinkedHList3[T1, T2, T3](e1: T1, e2: T2, e3: T3)
+  extends L_::[T1, L_::[T2, L_::[T3, LinkedHNil]]] {
+    def head: T1 = e1
+    def tail: L_::[T2, L_::[T3, LinkedHNil]] = LinkedHList2(e2, e3)
+  }
 
-final case class LinkedHList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4) extends L_::[T1, L_::[T2, L_::[T3, L_::[T4, LinkedHNil]]]] {
-  def head: T1 = e1
-  def tail: L_::[T2, L_::[T3, L_::[T4, LinkedHNil]]] = LinkedHList3(e2, e3, e4)
-}
-
-final case class LinkedHCons[+H, +T <: LinkedHList](head: H, tail: T) extends L_::[H, T]
-
-object LinkedHList {
-  def cons[H, T <: LinkedHList](h: H, t: T): H L_:: T = (t match {
-    case _: LinkedHCons[_, _]        => LinkedHCons(h, t)
-    case LinkedHNil                  => LinkedHList1(h)
-    case LinkedHList1(e1)            => LinkedHList2(h, e1)
-    case LinkedHList2(e1, e2)        => LinkedHList3(h, e1, e2)
-    case LinkedHList3(e1, e2, e3)    => LinkedHList4(h, e1, e2, e3)
-    case _: LinkedHList4[_, _, _, _] => LinkedHCons(h, t)
-  }).asInstanceOf[H L_:: T]
-}
+case class LinkedHList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4)
+  extends L_::[T1, L_::[T2, L_::[T3, L_::[T4, LinkedHNil]]]] {
+    def head: T1 = e1
+    def tail: L_::[T2, L_::[T3, L_::[T4, LinkedHNil]]] = LinkedHList3(e2, e3, e4)
+  }
 
 // HLists as unrolled 4 linked lists --------------------------------------------
 
