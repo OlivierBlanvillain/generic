@@ -4,130 +4,111 @@ import org.openjdk.jmh.annotations._
 
 @State(Scope.Thread)
 object DataDef {
-  val tuple1         = Tuple1("1")
-  // : Int U4_:: Unrolled4HNil
-  val unrolledHList1 = Unrolled4HList1("1", Unrolled4HNil)
-  val arrayHList1    : String A_:: ArrayHNil    = ArrayHList1("1")
-  val linkedHList1   : String L_:: LinkedHNil   = LinkedHList1("1")
-  val nullHList1     : String N_:: NullHNil     = new NullHListImpl("1", NullHList.nil).asInstanceOf[String N_:: NullHNil]
-  val tuple2         = Tuple2("1", "2")
-  // : Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList2 = Unrolled4HList2("1", "2", Unrolled4HNil)
-  val arrayHList2    : String A_:: String A_:: ArrayHNil    = ArrayHList2("1", "2")
-  val linkedHList2   : String L_:: String L_:: LinkedHNil   = LinkedHList2("1", "2")
-  val nullHList2     : String N_:: String N_:: NullHNil     = new NullHListImpl("1", "2", NullHList.nil).asInstanceOf[String N_:: String N_:: NullHNil]
-  val tuple3         = Tuple3("1", "2", "3")
-  // : Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList3 = Unrolled4HList3("1", "2", "3", Unrolled4HNil)
-  val arrayHList3    : String A_:: String A_:: String A_:: ArrayHNil    = ArrayHList3("1", "2", "3")
-  val linkedHList3   : String L_:: String L_:: String L_:: LinkedHNil   = LinkedHList3("1", "2", "3")
-  val nullHList3     : String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("1", "2", "3", NullHList.nil).asInstanceOf[String N_:: String N_:: String N_:: NullHNil]
-  val tuple4         = Tuple4("1", "2", "3", "4")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList4 = Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)
-  val arrayHList4    : String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHList4("1", "2", "3", "4")
-  val linkedHList4   : String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHList4("1", "2", "3", "4")
-  val nullHList4     : String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("1", "2", "3", "4", NullHList.nil).asInstanceOf[String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple5         = Tuple5("1", "2", "3", "4", "5")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList5 = Unrolled4HList1("5", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))
-  val arrayHList5    : String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5"))
-  val linkedHList5   : String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))
-  val nullHList5     : String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("5", new NullHListImpl("1", "2", "3", "4", NullHList.nil)).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple6         = Tuple6("1", "2", "3", "4", "5", "6")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList6 = Unrolled4HList2("5", "6", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))
-  val arrayHList6    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6"))
-  val linkedHList6   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))
-  val nullHList6     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("5", "6", new NullHListImpl("1", "2", "3", "4", NullHList.nil)).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple7         = Tuple7("1", "2", "3", "4", "5", "6", "7")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList7 = Unrolled4HList3("5", "6", "7", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))
-  val arrayHList7    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7"))
-  val linkedHList7   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))
-  val nullHList7     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("5", "6", "7", new NullHListImpl("1", "2", "3", "4", NullHList.nil)).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple8         = Tuple8("1", "2", "3", "4", "5", "6", "7", "8")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList8 = Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))
-  val arrayHList8    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8"))
-  val linkedHList8   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))))
-  val nullHList8     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil)).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple9         = Tuple9("1", "2", "3", "4", "5", "6", "7", "8", "9")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList9 = Unrolled4HList1("9", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))
-  val arrayHList9    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9"))
-  val linkedHList9   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))))
-  val nullHList9     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("9", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple10         = Tuple10("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList10 = Unrolled4HList2("9", "10", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))
-  val arrayHList10    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
-  val linkedHList10   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))))))
-  val nullHList10     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("9", "10", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple11         = Tuple11("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList11 = Unrolled4HList3("9", "10", "11", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))
-  val arrayHList11    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"))
-  val linkedHList11   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))))))
-  val nullHList11     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("9", "10", "11", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple12         = Tuple12("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList12 = Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))
-  val arrayHList12    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"))
-  val linkedHList12   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))))))))
-  val nullHList12     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple13         = Tuple13("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList13 = Unrolled4HList1("13", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))))
-  val arrayHList13    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"))
-  val linkedHList13   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))))))))
-  val nullHList13     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("13", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil)))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple14         = Tuple14("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList14 = Unrolled4HList2("13", "14", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))))
-  val arrayHList14    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"))
-  val linkedHList14   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))))))))))
-  val nullHList14     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("13", "14", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil)))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple15         = Tuple15("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList15 = Unrolled4HList3("13", "14", "15", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))))
-  val arrayHList15    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"))
-  val linkedHList15   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("15", LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))))))))))
-  val nullHList15     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("13", "14", "15", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil)))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple16         = Tuple16("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList16 = Unrolled4HList4("13", "14", "15", "16", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))))
-  val arrayHList16    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"))
-  val linkedHList16   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("16", LinkedHCons("15", LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))))))))))))
-  val nullHList16     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("13", "14", "15", "16", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil)))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple17         = Tuple17("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList17 = Unrolled4HList1("17", Unrolled4HList4("13", "14", "15", "16", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))))
-  val arrayHList17    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17"))
-  val linkedHList17   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("17", LinkedHCons("16", LinkedHCons("15", LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))))))))))))
-  val nullHList17     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("17", new NullHListImpl("13", "14", "15", "16", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple18         = Tuple18("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList18 = Unrolled4HList2("17", "18", Unrolled4HList4("13", "14", "15", "16", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))))
-  val arrayHList18    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"))
-  val linkedHList18   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("18", LinkedHCons("17", LinkedHCons("16", LinkedHCons("15", LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))))))))))))))
-  val nullHList18     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("17", "18", new NullHListImpl("13", "14", "15", "16", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple19         = Tuple19("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList19 = Unrolled4HList3("17", "18", "19", Unrolled4HList4("13", "14", "15", "16", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))))
-  val arrayHList19    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"))
-  val linkedHList19   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("19", LinkedHCons("18", LinkedHCons("17", LinkedHCons("16", LinkedHCons("15", LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))))))))))))))
-  val nullHList19     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("17", "18", "19", new NullHListImpl("13", "14", "15", "16", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple20         = Tuple20("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList20 = Unrolled4HList4("17", "18", "19", "20", Unrolled4HList4("13", "14", "15", "16", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil)))))
-  val arrayHList20    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"))
-  val linkedHList20   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("20", LinkedHCons("19", LinkedHCons("18", LinkedHCons("17", LinkedHCons("16", LinkedHCons("15", LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4")))))))))))))))))
-  val nullHList20     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("17", "18", "19", "20", new NullHListImpl("13", "14", "15", "16", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil))))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
-  val tuple21         = Tuple21("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21")
-  // : Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Int U4_:: Unrolled4HNil
-  val unrolledHList21 = Unrolled4HList1("21", Unrolled4HList4("17", "18", "19", "20", Unrolled4HList4("13", "14", "15", "16", Unrolled4HList4("9", "10", "11", "12", Unrolled4HList4("5", "6", "7", "8", Unrolled4HList4("1", "2", "3", "4", Unrolled4HNil))))))
-  val arrayHList21    : String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: String A_:: ArrayHNil    = ArrayHListN(Array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21"))
-  val linkedHList21   : String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: String L_:: LinkedHNil   = LinkedHCons("21", LinkedHCons("20", LinkedHCons("19", LinkedHCons("18", LinkedHCons("17", LinkedHCons("16", LinkedHCons("15", LinkedHCons("14", LinkedHCons("13", LinkedHCons("12", LinkedHCons("11", LinkedHCons("10", LinkedHCons("9", LinkedHCons("8", LinkedHCons("7", LinkedHCons("6", LinkedHCons("5", LinkedHList4("1", "2", "3", "4"))))))))))))))))))
-  val nullHList21     : String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil     = new NullHListImpl("21", new NullHListImpl("17", "18", "19", "20", new NullHListImpl("13", "14", "15", "16", new NullHListImpl("9", "10", "11", "12", new NullHListImpl("5", "6", "7", "8", new NullHListImpl("1", "2", "3", "4", NullHList.nil)))))).asInstanceOf[String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: String N_:: NullHNil]
+  val cb = new CreationBench
+
+  val tuple1         = cb.createTuple1
+  val unrolledHList1 = cb.createUnrolled4HList1
+  val arrayHList1    = cb.createArrayHList1
+  val linkedHList1   = cb.createLinkedHList1
+  val nullHList1     = cb.createNullHList1
+  val tuple2         = cb.createTuple2
+  val unrolledHList2 = cb.createUnrolled4HList2
+  val arrayHList2    = cb.createArrayHList2
+  val linkedHList2   = cb.createLinkedHList2
+  val nullHList2     = cb.createNullHList2
+  val tuple3         = cb.createTuple3
+  val unrolledHList3 = cb.createUnrolled4HList3
+  val arrayHList3    = cb.createArrayHList3
+  val linkedHList3   = cb.createLinkedHList3
+  val nullHList3     = cb.createNullHList3
+  val tuple4         = cb.createTuple4
+  val unrolledHList4 = cb.createUnrolled4HList4
+  val arrayHList4    = cb.createArrayHList4
+  val linkedHList4   = cb.createLinkedHList4
+  val nullHList4     = cb.createNullHList4
+  val tuple5         = cb.createTuple5
+  val unrolledHList5 = cb.createUnrolled4HList5
+  val arrayHList5    = cb.createArrayHList5
+  val linkedHList5   = cb.createLinkedHList5
+  val nullHList5     = cb.createNullHList5
+  val tuple6         = cb.createTuple6
+  val unrolledHList6 = cb.createUnrolled4HList6
+  val arrayHList6    = cb.createArrayHList6
+  val linkedHList6   = cb.createLinkedHList6
+  val nullHList6     = cb.createNullHList6
+  val tuple7         = cb.createTuple7
+  val unrolledHList7 = cb.createUnrolled4HList7
+  val arrayHList7    = cb.createArrayHList7
+  val linkedHList7   = cb.createLinkedHList7
+  val nullHList7     = cb.createNullHList7
+  val tuple8         = cb.createTuple8
+  val unrolledHList8 = cb.createUnrolled4HList8
+  val arrayHList8    = cb.createArrayHList8
+  val linkedHList8   = cb.createLinkedHList8
+  val nullHList8     = cb.createNullHList8
+  val tuple9         = cb.createTuple9
+  val unrolledHList9 = cb.createUnrolled4HList9
+  val arrayHList9    = cb.createArrayHList9
+  val linkedHList9   = cb.createLinkedHList9
+  val nullHList9     = cb.createNullHList9
+  val tuple10         = cb.createTuple10
+  val unrolledHList10 = cb.createUnrolled4HList10
+  val arrayHList10    = cb.createArrayHList10
+  val linkedHList10   = cb.createLinkedHList10
+  val nullHList10     = cb.createNullHList10
+  val tuple11         = cb.createTuple11
+  val unrolledHList11 = cb.createUnrolled4HList11
+  val arrayHList11    = cb.createArrayHList11
+  val linkedHList11   = cb.createLinkedHList11
+  val nullHList11     = cb.createNullHList11
+  val tuple12         = cb.createTuple12
+  val unrolledHList12 = cb.createUnrolled4HList12
+  val arrayHList12    = cb.createArrayHList12
+  val linkedHList12   = cb.createLinkedHList12
+  val nullHList12     = cb.createNullHList12
+  val tuple13         = cb.createTuple13
+  val unrolledHList13 = cb.createUnrolled4HList13
+  val arrayHList13    = cb.createArrayHList13
+  val linkedHList13   = cb.createLinkedHList13
+  val nullHList13     = cb.createNullHList13
+  val tuple14         = cb.createTuple14
+  val unrolledHList14 = cb.createUnrolled4HList14
+  val arrayHList14    = cb.createArrayHList14
+  val linkedHList14   = cb.createLinkedHList14
+  val nullHList14     = cb.createNullHList14
+  val tuple15         = cb.createTuple15
+  val unrolledHList15 = cb.createUnrolled4HList15
+  val arrayHList15    = cb.createArrayHList15
+  val linkedHList15   = cb.createLinkedHList15
+  val nullHList15     = cb.createNullHList15
+  val tuple16         = cb.createTuple16
+  val unrolledHList16 = cb.createUnrolled4HList16
+  val arrayHList16    = cb.createArrayHList16
+  val linkedHList16   = cb.createLinkedHList16
+  val nullHList16     = cb.createNullHList16
+  val tuple17         = cb.createTuple17
+  val unrolledHList17 = cb.createUnrolled4HList17
+  val arrayHList17    = cb.createArrayHList17
+  val linkedHList17   = cb.createLinkedHList17
+  val nullHList17     = cb.createNullHList17
+  val tuple18         = cb.createTuple18
+  val unrolledHList18 = cb.createUnrolled4HList18
+  val arrayHList18    = cb.createArrayHList18
+  val linkedHList18   = cb.createLinkedHList18
+  val nullHList18     = cb.createNullHList18
+  val tuple19         = cb.createTuple19
+  val unrolledHList19 = cb.createUnrolled4HList19
+  val arrayHList19    = cb.createArrayHList19
+  val linkedHList19   = cb.createLinkedHList19
+  val nullHList19     = cb.createNullHList19
+  val tuple20         = cb.createTuple20
+  val unrolledHList20 = cb.createUnrolled4HList20
+  val arrayHList20    = cb.createArrayHList20
+  val linkedHList20   = cb.createLinkedHList20
+  val nullHList20     = cb.createNullHList20
+  val tuple21         = cb.createTuple21
+  val unrolledHList21 = cb.createUnrolled4HList21
+  val arrayHList21    = cb.createArrayHList21
+  val linkedHList21   = cb.createLinkedHList21
+  val nullHList21     = cb.createNullHList21
 }

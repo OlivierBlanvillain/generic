@@ -21,4 +21,4 @@ lazy val `jmh-bench` = project
 
 lazy val `code-gen` = project.settings(scalaVersion := "2.11.1")
 
-addCommandAlias("validate", ";clean ;code-gen/run ;generic/test:run ;jmh-bench/jmh:run -i 1 -wi 1 -f 0 -foe true -bm SingleShotTime")
+addCommandAlias("validate", ";clean ;code-gen/run ;generic/test:run ;jmh-bench/jmh:run -i 1 -wi 1 -f 0 -foe true -bm ss")
