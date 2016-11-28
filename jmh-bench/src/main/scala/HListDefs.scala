@@ -28,23 +28,30 @@ object ArrayHList {
   implicit class headTail[H, T <: ArrayHList](l: H A_:: T) {
     def head: H = (
       (l: ArrayHList) match {
-        case ArrayHNil                  => ???
-        case a: ArrayHList1[_]          => a.e1
-        case a: ArrayHList2[_, _]       => a.e1
-        case a: ArrayHList3[_, _, _]    => a.e1
-        case a: ArrayHList4[_, _, _, _] => a.e1
-        case ArrayHListN(underlying) => underlying.head
+        case ArrayHListN(underlying)  => underlying(0)
+        case ArrayHList1(e1)          => e1
+        case ArrayHList2(e1, _)       => e1
+        case ArrayHList3(e1, _, _)    => e1
+        case ArrayHList4(e1, _, _, _) => e1
       }
     ).asInstanceOf[H]
 
     def tail: T = (
       (l: ArrayHList) match {
-        case ArrayHNil                   => ???
+        case ArrayHListN(underlying)     => {
+          var s = underlying.size
+          s = s - 1
+          val a = new Array[Any](s)
+          while (s != 0) {
+            a(s - 1) = underlying(s)
+            s = s - 1
+          }
+          ArrayHListN(a)
+        }
         case ArrayHList1(e1)             => ArrayHNil
         case ArrayHList2(e1, e2)         => ArrayHList1(e2)
         case ArrayHList3(e1, e2, e3)     => ArrayHList2(e2, e3)
         case ArrayHList4(e1, e2, e3, e4) => ArrayHList3(e2, e3, e3)
-        case ArrayHListN(underlying)     => ArrayHListN(underlying.tail)
       }
     ).asInstanceOf[T]
   }
