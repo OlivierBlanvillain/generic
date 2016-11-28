@@ -108,40 +108,40 @@ case class LinkedHList4[T1, T2, T3, T4](e1: T1, e2: T2, e3: T3, e4: T4)
 
 // HLists as unrolled 4 linked lists --------------------------------------------
 
-sealed trait Unrolled4HList
-sealed trait U_::[+H, +T <: Unrolled4HList] extends Unrolled4HList
-sealed trait Unrolled4HNil extends Unrolled4HList
+sealed trait UnrolledHList
+sealed trait U_::[+H, +T <: UnrolledHList] extends UnrolledHList
+sealed trait UnrolledHNil extends UnrolledHList
 
-final case object Unrolled4HNil extends Unrolled4HNil
-final case class Unrolled4HList1[H1, T <: Unrolled4HList](e1: H1, t: T) extends (H1 U_:: T)
-final case class Unrolled4HList2[H1, H2, T <: Unrolled4HList](e1: H1, e2: H2, t: T) extends (H1 U_:: H2 U_:: T)
-final case class Unrolled4HList3[H1, H2, H3, T <: Unrolled4HList](e1: H1, e2: H2, e3: H3, t: T) extends (H1 U_:: H2 U_:: H3 U_:: T)
-final case class Unrolled4HList4[H1, H2, H3, H4, T <: Unrolled4HList](e1: H1, e2: H2, e3: H3, e4: H4, t: T) extends (H1 U_:: H2 U_:: H3 U_:: H4 U_:: T)
+final case object UnrolledHNil extends UnrolledHNil
+final case class UnrolledHList1[H1, T <: UnrolledHList](e1: H1, t: T) extends (H1 U_:: T)
+final case class UnrolledHList2[H1, H2, T <: UnrolledHList](e1: H1, e2: H2, t: T) extends (H1 U_:: H2 U_:: T)
+final case class UnrolledHList3[H1, H2, H3, T <: UnrolledHList](e1: H1, e2: H2, e3: H3, t: T) extends (H1 U_:: H2 U_:: H3 U_:: T)
+final case class UnrolledHList4[H1, H2, H3, H4, T <: UnrolledHList](e1: H1, e2: H2, e3: H3, e4: H4, t: T) extends (H1 U_:: H2 U_:: H3 U_:: H4 U_:: T)
 
-object Unrolled4HList {
-  def cons[H, T <: Unrolled4HList](h: H, t: T): H U_:: T = (t match {
-    case Unrolled4HNil                      => Unrolled4HList1(h, Unrolled4HNil)
-    case Unrolled4HList1(e1, tail)          => Unrolled4HList2(h, e1, tail)
-    case Unrolled4HList2(e1, e2, tail)      => Unrolled4HList3(h, e1, e2, tail)
-    case Unrolled4HList3(e1, e2, e3, tail)  => Unrolled4HList4(h, e1, e2, e3, tail)
-    case _                                 => Unrolled4HList1(h, t)
+object UnrolledHList {
+  def cons[H, T <: UnrolledHList](h: H, t: T): H U_:: T = (t match {
+    case UnrolledHNil                      => UnrolledHList1(h, UnrolledHNil)
+    case UnrolledHList1(e1, tail)          => UnrolledHList2(h, e1, tail)
+    case UnrolledHList2(e1, e2, tail)      => UnrolledHList3(h, e1, e2, tail)
+    case UnrolledHList3(e1, e2, e3, tail)  => UnrolledHList4(h, e1, e2, e3, tail)
+    case _                                 => UnrolledHList1(h, t)
   }).asInstanceOf[H U_:: T]
 
-  implicit class headTail[H, T <: Unrolled4HList](l: H U_:: T) {
-    def head: H = ((l: Unrolled4HList) match {
-      case Unrolled4HNil                     => ???
-      case u: Unrolled4HList1[_, _]          => u.e1
-      case u: Unrolled4HList2[_, _, _]       => u.e1
-      case u: Unrolled4HList3[_, _, _, _]    => u.e1
-      case u: Unrolled4HList4[_, _, _, _, _] => u.e1
+  implicit class headTail[H, T <: UnrolledHList](l: H U_:: T) {
+    def head: H = ((l: UnrolledHList) match {
+      case UnrolledHNil                     => ???
+      case u: UnrolledHList1[_, _]          => u.e1
+      case u: UnrolledHList2[_, _, _]       => u.e1
+      case u: UnrolledHList3[_, _, _, _]    => u.e1
+      case u: UnrolledHList4[_, _, _, _, _] => u.e1
     }).asInstanceOf[H]
 
-    def tail: T = ((l: Unrolled4HList) match {
-      case Unrolled4HNil                         => ???
-      case Unrolled4HList1(e1, tail)             => tail
-      case Unrolled4HList2(e1, e2, tail)         => Unrolled4HList1(e2, tail)
-      case Unrolled4HList3(e1, e2, e3, tail)     => Unrolled4HList2(e2, e3, tail)
-      case Unrolled4HList4(e1, e2, e3, e4, tail) => Unrolled4HList3(e2, e3, e3, tail)
+    def tail: T = ((l: UnrolledHList) match {
+      case UnrolledHNil                         => ???
+      case UnrolledHList1(e1, tail)             => tail
+      case UnrolledHList2(e1, e2, tail)         => UnrolledHList1(e2, tail)
+      case UnrolledHList3(e1, e2, e3, tail)     => UnrolledHList2(e2, e3, tail)
+      case UnrolledHList4(e1, e2, e3, e4, tail) => UnrolledHList3(e2, e3, e3, tail)
     }).asInstanceOf[T]
   }
 }

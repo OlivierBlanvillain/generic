@@ -91,7 +91,7 @@ object Gen {
         |  val cb = new CreationBench
         |
         -  val tuple$arity         = cb.createScalaTuple$arity
-        -  val unrolledHList$arity = cb.createUnrolled4HList$arity
+        -  val unrolledHList$arity = cb.createUnrolledHList$arity
         -  val arrayHList$arity    = cb.createArrayHList$arity
         -  val linkedHList$arity   = cb.createLinkedHList$arity
         -  val nullHList$arity     = cb.createNullHList$arity
@@ -135,13 +135,13 @@ object Gen {
              }
            }
 
-        -  // : ${"Int U4_:: " * arity + "Unrolled4HNil"}
-        -  @Benchmark def createUnrolled4HList$arity = ${
-             1.to(arity).toList.grouped(unroll).foldLeft("Unrolled4HNil") {
-                case (p, c :: Nil) =>                    s"Unrolled4HList1(${quote(c)}, $p)"
-                case (p, c1 :: c2 :: Nil) =>             s"Unrolled4HList2(${quote(c1)}, ${quote(c2)}, $p)"
-                case (p, c1 :: c2 :: c3 :: Nil) =>       s"Unrolled4HList3(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, $p)"
-                case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"Unrolled4HList4(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, ${quote(c4)}, $p)"
+        -  // : ${"Int U4_:: " * arity + "UnrolledHNil"}
+        -  @Benchmark def createUnrolledHList$arity = ${
+             1.to(arity).toList.grouped(unroll).foldLeft("UnrolledHNil") {
+                case (p, c :: Nil) =>                    s"UnrolledHList1(${quote(c)}, $p)"
+                case (p, c1 :: c2 :: Nil) =>             s"UnrolledHList2(${quote(c1)}, ${quote(c2)}, $p)"
+                case (p, c1 :: c2 :: c3 :: Nil) =>       s"UnrolledHList3(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, $p)"
+                case (p, c1 :: c2 :: c3 :: c4 :: Nil) => s"UnrolledHList4(${quote(c1)}, ${quote(c2)}, ${quote(c3)}, ${quote(c4)}, $p)"
                 case _ => ???
               }
             }
@@ -187,8 +187,8 @@ object Gen {
 
         -  @Benchmark def lastLinkedHList$arity    : String = linkedHList$arity${1.until(arity).map(_ => ".tail").mkString}.head
 
-        -  @Benchmark def lastUnrolled4HList$arity : String = ${
-             s"unrolledHList$arity${1.to((arity - 1) / unroll).map(_ => ".t.asInstanceOf[Unrolled4HList4[String, String, String, String, Unrolled4HNil]]").mkString}.e${if (arity <= unroll) (arity - 1) % unroll + 1 else 4}"
+        -  @Benchmark def lastUnrolledHList$arity : String = ${
+             s"unrolledHList$arity${1.to((arity - 1) / unroll).map(_ => ".t.asInstanceOf[UnrolledHList4[String, String, String, String, UnrolledHNil]]").mkString}.e${if (arity <= unroll) (arity - 1) % unroll + 1 else 4}"
            }
 
         -  @Benchmark def lastNullHList$arity      : String = ${
@@ -252,7 +252,7 @@ object Gen {
              }
            } }
 
-        -  @Benchmark def scanUnrolled4HList$arity(bh: Blackhole): Unit = { ${
+        -  @Benchmark def scanUnrolledHList$arity(bh: Blackhole): Unit = { ${
              (if (arity > unroll) s"val t1 = unrolledHList$arity.t; " else "") +
              2.to((arity - 1) / unroll).map { i =>
                s"val t$i = t${i - 1}.t; "
@@ -301,7 +301,7 @@ object Gen {
              if (arity == 1) "Nil" else s"Tuple${arity - 1}(${2.to(arity).map(i => s"tuple$arity._$i").mkString(", ")})" }
         -  @Benchmark def tailArrayHList$arity    = arrayHList$arity.tail
         -  @Benchmark def tailLinkedHList$arity   = linkedHList$arity.tail
-        -  @Benchmark def tailUnrolled4HList$arity = unrolledHList$arity.tail
+        -  @Benchmark def tailUnrolledHList$arity = unrolledHList$arity.tail
         -  @Benchmark def tailNullHList$arity     = nullHList$arity.tail
         |}
       """
@@ -324,7 +324,7 @@ object Gen {
              s"Tuple${arity + 1}(${quote("s")}, ${1.to(arity).map(i => s"tuple$arity._$i").mkString(", ")})" }
         -  @Benchmark def consArrayHList$arity     = ArrayHList.cons("s", arrayHList$arity)
         -  @Benchmark def consLinkedHList$arity    = LinkedHList.cons("s", linkedHList$arity)
-        -  @Benchmark def consUnrolled4HList$arity = Unrolled4HList.cons("s", unrolledHList$arity)
+        -  @Benchmark def consUnrolledHList$arity = UnrolledHList.cons("s", unrolledHList$arity)
         -  @Benchmark def consNullHList$arity      = NullHList.cons("s", nullHList$arity)
         |}
       """
