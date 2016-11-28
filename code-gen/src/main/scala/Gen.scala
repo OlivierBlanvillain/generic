@@ -297,12 +297,12 @@ object Gen {
         |import DataDef._
         |
         |class TailBench {
-        -  @Benchmark def tailScalaTuple$arity    = ${
+        -  // @Benchmark def tailScalaTuple$arity    = ${
              if (arity == 1) "Nil" else s"Tuple${arity - 1}(${2.to(arity).map(i => s"tuple$arity._$i").mkString(", ")})" }
         -  @Benchmark def tailArrayHList$arity    = arrayHList$arity.tail
-        -  @Benchmark def tailLinkedHList$arity   = linkedHList$arity.tail
-        -  @Benchmark def tailUnrolledHList$arity = unrolledHList$arity.tail
-        -  @Benchmark def tailNullHList$arity     = nullHList$arity.tail
+        -  // @Benchmark def tailLinkedHList$arity   = linkedHList$arity.tail
+        -  // @Benchmark def tailUnrolledHList$arity = unrolledHList$arity.tail
+        -  // @Benchmark def tailNullHList$arity     = nullHList$arity.tail
         |}
       """
     }
@@ -320,12 +320,12 @@ object Gen {
         |import DataDef._
         |
         |class ConsBench {
-        -  @Benchmark def consScalaTuple$arity    = ${
+        -  // @Benchmark def consScalaTuple$arity    = ${
              s"Tuple${arity + 1}(${quote("s")}, ${1.to(arity).map(i => s"tuple$arity._$i").mkString(", ")})" }
         -  @Benchmark def consArrayHList$arity     = ArrayHList.cons("s", arrayHList$arity)
-        -  @Benchmark def consLinkedHList$arity    = LinkedHList.cons("s", linkedHList$arity)
-        -  @Benchmark def consUnrolledHList$arity = UnrolledHList.cons("s", unrolledHList$arity)
-        -  @Benchmark def consNullHList$arity      = NullHList.cons("s", nullHList$arity)
+        -  // @Benchmark def consLinkedHList$arity    = LinkedHList.cons("s", linkedHList$arity)
+        -  // @Benchmark def consUnrolledHList$arity = UnrolledHList.cons("s", unrolledHList$arity)
+        -  // @Benchmark def consNullHList$arity      = NullHList.cons("s", nullHList$arity)
         |}
       """
     }
