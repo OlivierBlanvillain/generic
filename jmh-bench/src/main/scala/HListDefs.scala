@@ -16,12 +16,27 @@ final case class ArrayHListN[H, T <: ArrayHList](underlying: Array[Any]) extends
 object ArrayHList {
   def cons[H, T <: ArrayHList](h: H, t: T): H A_:: T = (
     t match {
+      case ArrayHListN(underlying)     =>
+        var s = underlying.size
+        val a = new Array[Any](s + 1)
+        a(0) = h
+        while (s != 0) {
+          a(s) = underlying(s - 1)
+          s = s - 1
+        }
+        ArrayHListN(a)
+
       case ArrayHNil                   => ArrayHList1(h)
       case ArrayHList1(e1)             => ArrayHList2(h, e1)
       case ArrayHList2(e1, e2)         => ArrayHList3(h, e1, e2)
       case ArrayHList3(e1, e2, e3)     => ArrayHList4(h, e1, e2, e3)
-      case ArrayHList4(e1, e2, e3, e4) => ArrayHListN(Array(h, e1, e2, e3, e4))
-      case ArrayHListN(underlying)     => ArrayHListN(h +: underlying)
+      case ArrayHList4(e1, e2, e3, e4) =>
+        val a = new Array[Any](4)
+        a(0) = e1
+        a(1) = e2
+        a(2) = e3
+        a(3) = e4
+        ArrayHListN(a)
     }
   ).asInstanceOf[H A_:: T]
 
@@ -38,7 +53,7 @@ object ArrayHList {
 
     def tail: T = (
       (l: ArrayHList) match {
-        case ArrayHListN(underlying)     => {
+        case ArrayHListN(underlying) =>
           var s = underlying.size
           s = s - 1
           val a = new Array[Any](s)
@@ -47,7 +62,7 @@ object ArrayHList {
             s = s - 1
           }
           ArrayHListN(a)
-        }
+
         case ArrayHList1(e1)             => ArrayHNil
         case ArrayHList2(e1, e2)         => ArrayHList1(e2)
         case ArrayHList3(e1, e2, e3)     => ArrayHList2(e2, e3)
