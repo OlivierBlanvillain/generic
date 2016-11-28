@@ -90,7 +90,7 @@ object Gen {
         |object DataDef {
         |  val cb = new CreationBench
         |
-        -  val tuple$arity         = cb.createTuple$arity
+        -  val tuple$arity         = cb.createScalaTuple$arity
         -  val unrolledHList$arity = cb.createUnrolled4HList$arity
         -  val arrayHList$arity    = cb.createArrayHList$arity
         -  val linkedHList$arity   = cb.createLinkedHList$arity
@@ -111,7 +111,7 @@ object Gen {
         |import org.openjdk.jmh.annotations._
         |
         |class CreationBench {
-        -  @Benchmark def createTuple$arity         = Tuple$arity(\"${1.to(arity).mkString("\", \"")}\")
+        -  @Benchmark def createScalaTuple$arity         = Tuple$arity(\"${1.to(arity).mkString("\", \"")}\")
 
         -  @Benchmark def createArrayHList$arity    : ${"String A_:: " * arity + "ArrayHNil   "} = ${
              arity match {
